@@ -1,16 +1,6 @@
 # Czyszcenie pamięci AMPL
 reset;
 
-# Parametry
-param cena_I := 8;          # Cena kotletu typu I ($/kg)
-param cena_II := 6;         # Cena kotletu typu II ($/kg)
-param max_I := 50;          # Maksymalna ilość kotletów typu I (kg)
-param max_II := 30;         # Maksymalna ilość kotletów typu II (kg)
-param sklad_bialy1 := 3;    # Skład mięsa białego w indyku typu 1 (kg/biała sztuka indyka)
-param sklad_ciemny1 := 2;   # Skład mięsa ciemnego w indyku typu 1 (kg/ciemna sztuka indyka)
-param sklad_bialy2 := 1.5;  # Skład mięsa białego w indyku typu 2 (kg/biała sztuka indyka)
-param sklad_ciemny2 := 4;   # Skład mięsa ciemnego w indyku typu 2 (kg/ciemna sztuka indyka)
-
 # Zmienne decyzyjne
 var x1 >= 0;   # Ilość indyków typu 1
 var x2 >= 0;   # Ilość indyków typu 2
@@ -19,14 +9,14 @@ var y2 >= 0;   # Ilość kotletów typu II
 
 # Funkcja celu do zmaxymalizowania
 maximize Zysk:
-    cena_I * y1 + cena_II * y2 - (10 * x1 + 8 * x2);
+    8 * y1 + 6 * y2 - (10 * x1 + 8 * x2);
 
 # Ograniczenia
 subject to
-Ograniczenie_max_I: y1 <= max_I;
-Ograniczenie_max_II: y2 <= max_II;
-Ograniczenie_bialy: sklad_bialy1 * x1 + sklad_bialy2 * x2 >= 0.7 * (y1 + y2);
-Ograniczenie_ciemny: sklad_ciemny1 * x1 + sklad_ciemny2 * x2 >= 0.5 * (y1 + y2);
+O_max_I: y1 <= 50;
+O_max_II: y2 <= 30;
+O_bialy: 3 * x1 + 1.5 * x2 >= 0.7 * (y1 + y2);
+O_ciemny: 2 * x1 + 4 * x2 >= 0.5 * (y1 + y2);
 
 # Rozwiązanie
 solve;

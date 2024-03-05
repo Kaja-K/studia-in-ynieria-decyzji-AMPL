@@ -1,7 +1,7 @@
 # Czyszczenie pamięci AMPL
 reset;
 
-# Parametry
+# Parametry - oddzielne dane
 param C_I := 0.28;
 param C_II := 0.14;
 param C_III := 0.10;
