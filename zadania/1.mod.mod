@@ -20,8 +20,8 @@ Popyt2: x2 <= 2;
 solve;
 
 # Wyświetlenie wyników
-display x1,x2;
+display x1,x2, zysk;
 
 end;
 
-# Wynik x1 = 3, x2 = 1.5
+# Wynik x1 = 3, x2 = 1.5, zysk = 21
