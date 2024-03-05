@@ -19,6 +19,7 @@ Popyt2: x2 <= 2;
 
 solve;
 
+# Wyświetlenie wyników
 display x1,x2;
 
 end;
