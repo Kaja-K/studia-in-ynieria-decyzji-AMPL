@@ -1,56 +1,54 @@
-# Czyszczenie pamięci AMPL
+option solver cplex;
 reset;
 
-# Parametry - oddzielne dane
-param C_I := 0.28;
-param C_II := 0.14;
-param C_III := 0.10;
+# Zdefiniowanie parametrów
+param n>0, integer;
+param k{1..n};
+param C{1..n};
+param Si{1..n};
+param Mn{1..n};
+param P{1..n};
+param mix_limit;
+param C_limit;
+param Si_limit;
+param Mn_limit;
+param P_limit;
 
-param Si_I := 0.10;
-param Si_II := 0.12;
-param Si_III := 0.06;
+# Definicja zmiennych decyzyjnych
+var x{i in 1..n} >= 0;
 
-param Mn_I := 0.30;
-param Mn_II := 0.20;
-param Mn_III := 0.30;
+# Funkcja celu do zmaksymalizowania zysku
+minimize Profit: sum{i in 1..n}k[i]*x[i];
 
-param P_I := 0.10;
-param P_II := 0.10;
-param P_III := 0.15;
+# Ograniczenia
+subject to
+C_contents: sum{i in 1..n}x[i]*C[i] <= C_limit*mix_limit;
+Si_contents: sum{i in 1..n}x[i]*Si[i] <= Si_limit*mix_limit;
+Mn_contents: sum{i in 1..n}x[i]*Mn[i] >= Mn_limit*mix_limit;
+P_contents: sum{i in 1..n}x[i]*P[i] >= P_limit*mix_limit;
+Mix: sum{i in 1..n}x[i] = mix_limit;
 
-param Koszt_I := 200;
-param Koszt_II := 150;
-param Koszt_III := 400;
+# Przypisanie wartości parametrów
+data;
+param n:=3;
+param k:= [1] 200 [2] 150 [3] 400;
+param C:= [1] 0.28 [2] 0.14 [3] 0.1;
+param Si:= [1] 0.1 [2] 0.12 [3] 0.06;
+param Mn:= [1] 0.3 [2] 0.2 [3] 0.3;
+param P:= [1] 0.1 [2] 0.1 [3] 0.15;
+param mix_limit:=5000;
+param C_limit:=0.14;
+param Si_limit:=0.08;
+param Mn_limit:=0.25;
+param P_limit:=0.12;
 
-param Maks_C := 0.14;
-param Maks_Si := 0.08;
-param Min_Mn := 0.25;
-param Min_P := 0.12;
 
-param Ilosc_Mieszanki := 5000;
-
-# Zmienna decyzyjna
-var ilosc_mieszanek >= 0;
-
-# Funkcja celu - minimalizacja kosztów
-minimize Koszt_Razem:
-  Koszt_I * ilosc_mieszanek * C_I +
-  Koszt_II * ilosc_mieszanek * C_II +
-  Koszt_III * ilosc_mieszanek * C_III;
-
-# Ograniczenia zawartości pierwiastków w mieszance
-subject to 
-O_C: C_I * ilosc_mieszanek + C_II * ilosc_mieszanek + C_III * ilosc_mieszanek >= Maks_C * Ilosc_Mieszanki;
-O_Si: Si_I * ilosc_mieszanek + Si_II * ilosc_mieszanek + Si_III * ilosc_mieszanek >= Maks_Si * Ilosc_Mieszanki;
-O_Mn: Mn_I * ilosc_mieszanek + Mn_II * ilosc_mieszanek + Mn_III * ilosc_mieszanek <= Min_Mn * Ilosc_Mieszanki;
-O_P: P_I * ilosc_mieszanek + P_II * ilosc_mieszanek + P_III * ilosc_mieszanek <= Min_P * Ilosc_Mieszanki;
-
-# Rozwiązanie problemu optymalizacyjnego
 solve;
 
-# Wyświetlenie wyniku
-display ilosc_mieszanek;
+display x,Profit;
+# Wynik: 1 = 869.565, 2 = 1086.96, 3 = 3043.48, Profit = 1554350
 
 end;
 
-# Wynik:  ilosc_mieszanek = 1428.57
+
+
