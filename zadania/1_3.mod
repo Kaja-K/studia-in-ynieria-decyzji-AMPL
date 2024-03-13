@@ -2,25 +2,24 @@ option solver cplex;
 reset;
 
 # Zmienne decyzyjne
-var x1 >= 0;   # Ilość indyków typu 1
-var x2 >= 0;   # Ilość indyków typu 2
-var y1 >= 0;   # Ilość kotletów typu I
-var y2 >= 0;   # Ilość kotletów typu II
+var x1 >= 0, <=50;   # Ilość indyków typu 1
+var x2 >= 0, <=30;   # Ilość indyków typu 2
+var y1 >= 0;   		 # Ilość kotletów typu I
+var y2 >= 0;   		 # Ilość kotletów typu II
 
 # Funkcja celu do zmaxymalizowania
-maximize Zysk: 8 * y1 + 6 * y2 - (10 * x1 + 8 * x2);
+maximize Profit: (8*x1 + 6*x2) - (10*y1 + 8*y2);
 
 # Ograniczenia
 subject to
-O_max_I: y1 <= 50;
-O_max_II: y2 <= 30;
-O_bialy: 3 * x1 + 1.5 * x2 >= 0.7 * (y1 + y2);
-O_ciemny: 2 * x1 + 4 * x2 >= 0.5 * (y1 + y2);
+O_w: 3*y1 + 1.5*y2 >= 0.7*x1 + 0.5*x2;
+O_d: 2*y1 + 4*y2 >= 0.3*x1 + 0.5*x2;
 
 solve;
 
-display x1, x2, y1, y2, Zysk;
-# Wynik: x1 = 18.2222, x2 = 0.888889, y1 = 50, y2 = 30, Zysk = 390.667
+display x1, x2, y1, y2, Profit;
+# Wynik: x1 = 50, x2 = 30, y1 = 16.6667, y2 = 0, Profit = 413.333
+
 
 end;
 
