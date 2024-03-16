@@ -15,7 +15,7 @@ maximize zysk: sum{i in 1..n, j in 1..m} min(zysk_strata[i,j] * x[i]);
 
 # Ograniczenia:
 subject to
-o_projekty{i in 1..n}: x[i] >= 0;   # Pieniądze przeznaczone na projekt i muszą być nieujemne
+o_projekty{i in 1..n}: x[i] >= 0;   		# Pieniądze przeznaczone na projekt i muszą być nieujemne
 o_limit: sum{i in 1..n} x[i] = inwestycja;  # Całkowity koszt inwestycji nie może przekroczyć dostępnej kwoty
 
 # Dane
