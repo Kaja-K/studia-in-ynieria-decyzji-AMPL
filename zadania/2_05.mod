@@ -29,5 +29,5 @@ param wsp_y:= [1] 0 [2] -3 [3] 1 [4] 4; # Współrzędne y dla poszczególnych m
 solve;
 
 display x1, x2, odleglosc;
-# Wynik: x1 = 0, x2 = 0, odleglosc = 105;
+# Wynik: x1 = 0, x2 = 0, odleglosc = 105; - ?
 end;             

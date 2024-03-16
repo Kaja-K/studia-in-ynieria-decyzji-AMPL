@@ -43,5 +43,6 @@ param limit_wysypiska := 1 500 2 500;
 solve;
 
 display x, y, koszt;
+# Wynik: - ?
 
 end;
