@@ -2,35 +2,32 @@ option solver cplex;
 reset;
 
 # Zdefiniowanie parametrów
-param n>0 integer;
-param p{1..n};
-param d{1..n};
-param h{1..n};
-param h_limit;
+param zadania>0, integer; # Liczba zadań
+param zysk{1..zadania};   # Zysk z wykonania każdego zadania
+param termin{1..zadania}; # Termin wykonania każdego zadania
+param godziny{1..zadania};# Godziny potrzebne do wykonania każdego zadania
+param limit_godz;  		  # Limit dostępnych godzin roboczych
 
-
-# Definicja zmiennych decyzyjnych
-var x{i in 1..n} >=0, <= d[i];
+# Definicja zmiennych decyzyjnych - Ilość godzin poświęconych na wykonanie każdego zadania
+var ilość_godz{i in 1..zadania} >=0, <= termin[i]; 
 
 # Funkcja celu do zmaksymalizowania zysku
-maximize Profit: sum{i in 1..n} p[i]*x[i];
+maximize maks_zysk: sum{i in 1..zadania} zysk[i]*ilość_godz[i];  
 
 # Ograniczenia - Dostępne godziny robocze
-subject to Labor_Hours: sum{i in 1..n}  h[i]*x[i] <= h_limit;
-
+subject to o_godziny: sum{i in 1..zadania}  godziny[i]*ilość_godz[i] <= limit_godz;  
 
 # Przypisanie wartości parametrów
 data;
-param n := 2;
-param p := [1] 120 [2] 80;
-param d := [1] 20 [2] 40;
-param h := [1] 20 [2] 10;
-param h_limit := 500;
+param zadania := 2;  					
+param zysk := [1] 120 [2] 80; 
+param termin := [1] 20 [2] 40;  	
+param godziny := [1] 20 [2] 10;  		
+param limit_godz := 500;  			
 
 solve;
 
-display x, Profit; 
-# Wynik: 1 = 5, 2 = 40, Profit = 3800
+display ilość_godz, maks_zysk; 
+# Wynik: 1 = 5, 2 = 40, maks_zysk = 3800
 
 end;
-

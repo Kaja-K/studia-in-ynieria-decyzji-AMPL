@@ -1,6 +1,6 @@
 # Przykład 1 z wykładu 1 
 
-# Czyszcenie pamięci AMPL
+option solver cplex;
 reset;
 
 # Definicja zmiennych decyzyjnych
@@ -19,9 +19,8 @@ Popyt2: x2 <= 2;
 
 solve;
 
-# Wyświetlenie wyników
 display x1,x2, zysk;
+# Wynik x1 = 3, x2 = 1.5, zysk = 21
 
 end;
 
-# Wynik x1 = 3, x2 = 1.5, zysk = 21

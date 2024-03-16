@@ -2,41 +2,38 @@ option solver cplex;
 reset;
 
 # Zdefiniowanie parametrów
-param n>0 integer;
-param c{1..n};
-param w{1..n};
-param h{1..n};
-param p{1..n};
-param f_limit;
-param h_limit;
+param n>0 integer;  	# Liczba dostępnych opcji rolniczych
+param koszt{1..n};  	# Koszt jednostkowy produktu
+param wartość{1..n};  	# Wartość produkowanego produktu na hektarze
+param godziny{1..n};  	# Liczba godzin pracy potrzebnych do produkcji jednostki produktu
+param produkt{1..n};  	# Dostępna ilość produktu
+param pole_limit;  		# Limit powierzchni pola
+param godz_limit;  		# Limit dostępnych godzin pracy
 
+# Definicja zmiennych decyzyjnych - Ilość hektarów przeznaczonych na produkcję każdego z produktów
+var hektary{i in 1..n} >=0, <= produkt[i]/wartość[i];  
 
-# Definicja zmiennych decyzyjnych
-var x{i in 1..n} >=0, <= p[i]/w[i];
+# Funkcja celu do zmaksymalizowania zysku z uwzględnieniem kosztów i godzin pracy
+maximize zysk: sum{i in 1..n} koszt[i]*wartość[i]*hektary[i] - sum{i in 1..n} godziny[i]*wartość[i]*hektary[i];  
 
-# Funkcja celu do zmaksymalizowania zysku
-maximize Profit: sum{i in 1..n} c[i]*w[i]*x[i] - sum{i in 1..n} h[i]*w[i]*x[i];
-
-# Ograniczenia - Dostępne godziny robocze oraz ziemia
+# Ograniczenia 
 subject to 
-Field: sum {i in 1..n} x[i] <= f_limit;
-Labor_Hours: sum{i in 1..n} x[i]*h[i] <= h_limit;
-
+o_pole: sum {i in 1..n} hektary[i] <= pole_limit;  					# Ilość wykorzystanej powierzchni pola
+o_godziny_p: sum{i in 1..n} hektary[i]*godziny[i] <= godz_limit;	# Godziny pracy
 
 # Przypisanie wartości parametrów
 data;
-param n := 3;
-param c := [1] 30 [2] 50 [3] 40;
-param w := [1] 10 [2] 8 [3] 5;
-param h := [1] 12 [2] 20 [3] 7;
-param p := [1] 560 [2] 480 [3] 500;
-param h_limit := 1400;
-param f_limit := 100;
+param n := 3;  						
+param koszt := [1] 30 [2] 50 [3] 40; 	
+param wartość := [1] 10 [2] 8 [3] 5;  	
+param godziny := [1] 12 [2] 20 [3] 7;  	
+param produkt := [1] 560 [2] 480 [3] 500; 
+param godz_limit := 1400;  		
+param pole_limit := 100;  
 
 solve;
 
-display x, Profit; 
+display hektary, zysk; 
 # Wynik: 1 = 0, 2 = 53.8462, 3 = 46.1538, Profit = 20538.5
 
 end;
-
