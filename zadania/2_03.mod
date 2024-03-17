@@ -2,38 +2,38 @@ option solver cplex;
 reset;
 
 # Deklaracja parametrów
-set projekty;
-set lata;
-param koszt {projekty}; 		# Koszt projektów
-param przychod {projekty}; 		# Przychód z projektów
-param budżet {lata}; 			# Budżet na lata
+param projekty > 0, integer; 				# Liczba projektów
+param koszt{1..projekty}; 					# Koszt każdego z projektów
+param przychod{1..projekty}; 				# Przychód z każdego z projektów
+param ukonczenie{1..projekty} >=0, <=1; 	# Informacja czy projekt został ukończony
+param lata > 0, integer; 					# Liczba lat
+param budzet{1..lata}; 						# Budżet na każdy rok
+param inwestowanie{1..lata, 1..projekty}; 	# Możliwość inwestowania w projekty w każdym roku
 
-# Deklaracja zmiennych decyzyjnych 
-var ukończone {projekty, lata} binary;  # Zmienna wskazująca ukończenie
-var częściowe2 >= 0, <= 1; 				# Zmienna ciągła dla częściowego ukończenia Projektu 2
-var częściowe3 >= 0, <= 1; 				# Zmienna ciągła dla częściowego ukończenia Projektu 3
+# Zmienna decyzyjna - zainwestowane pieniądze w projekt i w roku j
+var pieniadze{j in 1..lata, i in 1..projekty} >= 0; 
 
-# Funkcja celu - maksymalizacja całkowitego przychodu
-maximize całkowity_przychód: sum {p in projekty, l in lata} (ukończone[p,l] * przychod[p]);
-
+# Funkcja celu - maksymalizacja zysku
+maximize zysk: sum{i in 1..projekty} sum{j in 2..lata} (przychod[i] * (pieniadze[j-1,i] / koszt[i]) * (lata-j+1));
+ 
 # Ograniczenia
-subject to 
-ograniczenie_budżetu {l in lata}: sum {p in projekty} (ukończone[p,l] * koszt[p]) <= budżet[l];	# Ograniczenie budżetowe
-ukończenie_1_i_4: sum {l in lata} ukończone[1,l] = 1; 								  			# Ukończenie Projektu 1 w całości
-ukończenie_4_i_4: sum {l in lata} ukończone[4,l] = 1; 								  			# Ukończenie Projektu 4 w całości
-częściowe_2 {l in lata}: sum {p in projekty: p <> 1 and p <> 4} ukończone[2,l] >= 0.25; 		# Warunek częściowego ukończenia Projektu 2
-częściowe_3 {l in lata}: sum {p in projekty: p <> 1 and p <> 4} ukończone[3,l] >= 0.25; 		# Warunek częściowego ukończenia Projektu 3
-
-# Dane wejściowe
+subject to
+o_budzetowe{j in 1..lata}: sum{i in 1..projekty} pieniadze[j,i] <= budzet[j]; 						# Maksymalny budżet na rok
+o_ukonczenie{i in 1..projekty}: ukonczenie[i] <= (sum{j in 1..lata} pieniadze[j,i]) / koszt[i] <= 1;# Ukonczenie projektu w roku
+o_inwestowanie{j in 1..lata, i in 1..projekty}: pieniadze[j,i] = pieniadze[j,i] * inwestowanie[j,i];# Inwestowanie w kolejne lata
+ 
+# Dane
 data;
-set projekty := 1 2 3 4;
-set lata := 1 2 3 4 5;
-param: koszt przychod := 1 5.0 0.05 2 8.0 0.07 3 15.0 0.15 4 1.2 0.02;
-param budżet := 1 3.0 2 6.0 3 7.0 4 7.0 5 7.0;
+param projekty:=4;
+param koszt:= [1] 5 [2] 8 [3] 15 [4] 1.2;
+param przychod:= [1] 0.05 [2] 0.07 [3] 0.15 [4] 0.02;
+param ukonczenie:= [1] 1 [2] 0.25 [3] 0.25 [4] 1;
+param lata:=5;
+param budzet:= [1] 3 [2] 6 [3] 7 [4] 7 [5] 7;
+param inwestowanie:= 1 1 1 1 2 0 1 3 1 1 4 0 2 1 1 2 2 1 2 3 1 2 4 0 3 1 1 3 2 1 3 3 1 3 4 1 4 1 0 4 2 1 4 3 1 4 4 1 5 1 0 5 2 1 5 3 1 5 4 0;
 
 solve;
-
-display ukończone, całkowity_przychód; 
-# Wynik: całkowity_przychód = 1.1,  - ?
+display pieniadze, zysk;
+# Wynik: 3 3 = 0.8, 3 4 = 1.2, 4 2 = 1.8, 4 3 = 5.2, 5 2 = 0.2, zysk = 0.52375
 
 end;

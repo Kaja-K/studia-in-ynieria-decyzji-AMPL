@@ -31,7 +31,6 @@ param zwroty:= # Tworzy 64 linijki kombinacji [lokata, miesiac, miesiac] wartoś
 	[*,*,kwi]: "sty" "lut" "mar" "kwi":= "1_mies" 0 0 1 0 "2_mies" 0 1 0 0 "3_mies" 1 0 0 0 "4_mies" 0 0 0 0;
 
 solve;
-
 display gotowka, {i in miesiac, j in lokata: kwota[j,i] <> 0} kwota[j,i];
 #Wynik: gotowka = 403.701, kwi 4_mies = 453.701, lut 1_mies = 199.8 ,lut 2_mies = 100.2 ,sty 3_mies = 300
 

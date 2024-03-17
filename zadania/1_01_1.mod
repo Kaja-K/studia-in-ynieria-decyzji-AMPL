@@ -12,7 +12,6 @@ maximize zysk: 120*telewizory_27 + 80*telewizory_20;
 subject to o_godziny: 20*telewizory_27 + 10*telewizory_20 <= 500;  
 
 solve;
-
 display telewizory_27, telewizory_20, zysk; 
 # Wynik: TV27 = 5, TV20 = 40, zysk = 3800
 

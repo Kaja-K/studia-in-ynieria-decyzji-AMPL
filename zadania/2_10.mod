@@ -37,9 +37,7 @@ param UB:=250;
 param p:=0.15;
 
 solve;
-
 display produkcja, magazyn, niesprzedane, zysk;
-
 # Wynik  produkcja magazyn niesprzedane
 #		1      180        0       200
 #		2      250      270       180

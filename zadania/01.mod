@@ -18,7 +18,6 @@ Popyt1: x2-x1 <= 1;
 Popyt2: x2 <= 2;
 
 solve;
-
 display x1,x2, zysk;
 # Wynik x1 = 3, x2 = 1.5, zysk = 21
 

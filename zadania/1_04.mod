@@ -43,7 +43,6 @@ param Mn_limit:=0.25;
 param P_limit:=0.12;                 
 
 solve;
-
 display ilość_ton, Profit;
 # Wynik: 1 = 869.565, 2 = 1086.96, 3 = 3043.48, Profit = 1554350
 

@@ -2,32 +2,37 @@ option solver cplex;
 reset;
 
 # Zdefiniowanie parametrów
-param zadania>0, integer; # Liczba zadań
-param zysk{1..zadania};   # Zysk z wykonania każdego zadania
-param termin{1..zadania}; # Termin wykonania każdego zadania
-param godziny{1..zadania};# Godziny potrzebne do wykonania każdego zadania
-param limit_godz;  		  # Limit dostępnych godzin roboczych
+param opcje>0 integer;  	# Liczba dostępnych opcji rolniczych
+param koszt{1..opcje};  	# Koszt jednostkowy produktu
+param wartość{1..opcje};  	# Wartość produkowanego produktu na hektarze
+param godziny{1..opcje};  	# Liczba godzin pracy potrzebnych do produkcji jednostki produktu
+param produkt{1..opcje};  	# Dostępna ilość produktu
+param pole_limit;  			# Limit powierzchni pola
+param godz_limit;  			# Limit dostępnych godzin pracy
 
-# Definicja zmiennych decyzyjnych - Ilość godzin poświęconych na wykonanie każdego zadania
-var ilość_godz{i in 1..zadania} >=0, <= termin[i]; 
+# Definicja zmiennych decyzyjnych - Ilość hektarów przeznaczonych na produkcję każdego z produktów
+var hektary{i in 1..opcje} >=0, <= produkt[i]/wartość[i];  
 
-# Funkcja celu do zmaksymalizowania zysku
-maximize maks_zysk: sum{i in 1..zadania} zysk[i]*ilość_godz[i];  
+# Funkcja celu do zmaksymalizowania zysku z uwzględnieniem kosztów i godzin pracy
+maximize zysk: sum{i in 1..opcje} koszt[i]*wartość[i]*hektary[i] - sum{i in 1..opcje} godziny[i]*wartość[i]*hektary[i];  
 
-# Ograniczenia - Dostępne godziny robocze
-subject to o_godziny: sum{i in 1..zadania}  godziny[i]*ilość_godz[i] <= limit_godz;  
+# Ograniczenia 
+subject to 
+o_pole: sum {i in 1..opcje} hektary[i] <= pole_limit;  			# Ilość wykorzystanej powierzchni pola
+o_godz: sum{i in 1..opcje} hektary[i]*godziny[i] <= godz_limit;	# Godziny pracy
 
 # Przypisanie wartości parametrów
 data;
-param zadania := 2;  					
-param zysk := [1] 120 [2] 80; 
-param termin := [1] 20 [2] 40;  	
-param godziny := [1] 20 [2] 10;  		
-param limit_godz := 500;  			
+param opcje := 3;  						
+param koszt := [1] 30 [2] 50 [3] 40; 	
+param wartość := [1] 10 [2] 8 [3] 5;  	
+param godziny := [1] 12 [2] 20 [3] 7;  	
+param produkt := [1] 560 [2] 480 [3] 500; 
+param godz_limit := 1400;  		
+param pole_limit := 100;  
 
 solve;
-
-display ilość_godz, maks_zysk; 
-# Wynik: 1 = 5, 2 = 40, maks_zysk = 3800
+display hektary, zysk; 
+# Wynik: 1 = 0, 2 = 53.8462, 3 = 46.1538, Profit = 20538.5
 
 end;

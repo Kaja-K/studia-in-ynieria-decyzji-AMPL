@@ -14,7 +14,6 @@ o_pole: zyto + pszenica <= 100;  			# Łączna powierzchnię pola
 o_godziny: 12*zyto +20*pszenica <=1400;  	# Dostępne godziny pracy
 
 solve;
-
 display zyto, pszenica, zysk;
 # Wynik: zyto = 56, pszenica = 36.4, Profit = 17360
 

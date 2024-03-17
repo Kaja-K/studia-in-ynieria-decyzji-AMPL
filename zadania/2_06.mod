@@ -1,48 +1,57 @@
 option solver cplex;
 reset;
 
-# Deklaracja parametrów
-param n, integer, > 0;          			# Liczba miast
-param m, integer, > 0;          			# Liczba spalarni
-param l, integer, > 0;          			# Liczba wysypisk
-param transport_1{i in 1..n, j in 1..m}; 	# Koszt transportu z miast do spalarni
-param transport_2{j in 1..m, k in 1..l}; 	# Koszt transportu z spalarni do wysypiska
-param spalanie{j in 1..m};      			# Koszt spalania śmieci w poszczególnych spalarniach
-param popiol{j in 1..m};        			# Ilość popiołu wytworzonego w poszczególnych spalarniach
-param limit_spalania{j in 1..m};    		# Limit spalania śmieci w poszczególnych spalarniach
-param limit_wysypiska{k in 1..l};    		# Limit pojemności wysypiska
+# Definicja zestawu danych
+param miasta > 0, integer; 							# Liczba miast
+param spalarnie > 0, integer; 						# Liczba spalarni
+param wysypiska > 0, integer; 						# Liczba wysypisk
+param m_s{i in 1..miasta, j in 1..spalarnie}; 		# Odległość między miastem i spalarnią
+param s_w{j in 1..spalarnie, k in 1..wysypiska}; 	# Odległość między spalarnią i wysypiskiem
+param spalanie{j in 1..spalarnie};					# Koszt spalania w każdej z spalarni
+param popiol{j in 1..spalarnie}; 					# Ilość popiołu wytwarzanego przez każdą z spalarni
+param l_spalania{j in 1..spalarnie}; 				# Limit spalania dla każdej z spalarni
+param l_wysypisk{k in 1..wysypiska}; 				# Limit ilości odpadów w wysypisku
+param odpady{1..miasta}; 							# Ilość odpadów w każdym z miast
+param transport; 									# Koszt transportu jednej tony odpadów
 
 # Zmienne decyzyjne
-var x{i in 1..n, j in 1..m} >= 0; # Tony śmieci wysłanej z miasta i do spalarni j
-var y{j in 1..m, k in 1..l} >= 0; # Tony popiołu transportowanych ze spalarni j do wysypiska k
+var odpady_m_s{i in 1..miasta, j in 1..spalarnie} >= 0; 	# Ilość ton odpadów wysyłanych z miasta i do spalarni j
+var popiol_s_w{j in 1..spalarnie, k in 1..wysypiska} >= 0; 	# Ilość ton popiołu transportowanych ze spalarni j do wysypiska k
 
-# Funkcja celu minimalizacja kosztu
+# Funkcja celu - minimalizacja kosztu transportu
+
 minimize koszt: 
-    sum{i in 1..n, j in 1..m} transport_1[i,j] * x[i,j] +  	# Koszt transportu z miast do spalarni
-    sum{j in 1..m} spalanie[j] * sum{i in 1..n} x[i,j] +    # Koszt spalania śmieci w poszczególnych spalarniach
-    sum{j in 1..m, k in 1..l} transport_2[j,k] * y[j,k];  	# Koszt transportu z spalarni do wysypiska
+sum{i in 1..miasta, j in 1..spalarnie} m_s[i,j] * transport * odpady_m_s[i,j] +  	# Koszt transportu odpadów z miast do spalarni
+sum{i in 1..miasta, j in 1..spalarnie} spalanie[j] * odpady_m_s[i,j] +             	# Koszt spalania odpadów w poszczególnych spalarniach
+sum{j in 1..spalarnie, k in 1..wysypiska} s_w[j,k] * transport * popiol_s_w[j,k];  	# Koszt transportu popiołu ze spalarni do wysypiska
 
-# Ograniczenia 
+# Ograniczenia
 subject to
-o_spalanie{j in 1..m}: sum{i in 1..n} x[i,j] <= limit_spalania[j];    		   # Limit spalania śmieci w poszczególnych spalarniach
-o_pop{j in 1..m}: sum{i in 1..n} popiol[j] * x[i,j] <= sum{k in 1..l} y[j,k];  # Ilość popiołu wytworzonego w poszczególnych spalarniach
-o_wysypisko{k in 1..l}: sum{j in 1..m} y[j,k] <= limit_wysypiska[k];     	   # Limit pojemności wysypiska
+o_l_spalania{j in 1..spalarnie}: sum{i in 1..miasta} odpady_m_s[i,j] <= l_spalania[j];           				 	# Limit spalania w poszczególnych spalarniach
+o_limit_wysypiska{k in 1..wysypiska}: sum{j in 1..spalarnie} popiol_s_w[j,k] <= l_wysypisk[k];   					# Limit składowania popiołu w wysypisku
+o_p{j in 1..spalarnie}: sum{k in 1..wysypiska} popiol_s_w[j,k] >= sum{i in 1..miasta} popiol[j] * odpady_m_s[i,j];  # Wywóz popiołu z spalarni do wysypiska
+o_o{i in 1..miasta}: sum{j in 1..spalarnie} odpady_m_s[i,j] >= odpady[i];           								# Wywóz odpadów z miast
 
 # Dane
 data;
-param n := 2;  
-param m := 2; 
-param l := 2;  
-param transport_1 := 1 1 30 1 2 5 2 1 36 2 2 42;
-param transport_2 := 1 1 5  1 2 8 2 1 9  2 2 6;
-param spalanie := 1 40 2 30;
-param popiol := 1 0.3 2 0.3;
-param limit_spalania := 1 1500 2 1500;
-param limit_wysypiska := 1 500 2 500;
+param miasta:=2;
+param spalarnie:=2; 
+param wysypiska:=2;
+param m_s:= 1 1 30 1 2 5 2 1 36 2 2 42;
+param s_w:= 1 1 5 1 2 8 2 1 9 2 2 6 ;
+param spalanie:= [1] 40 [2] 30;
+param popiol:= [1] 0.3 [2] 0.3;
+param l_spalania:= [1] 1500 [2] 1500;
+param l_wysypisk:= [1] 500 [2] 500;
+param odpady:= [1] 1500 [2] 1400;
+param transport:=3;
 
 solve;
-
-display x, y, koszt;
-# Wynik: - ?
+display odpady_m_s, popiol_s_w, koszt;
+# Wynik: 	1 1        0       420
+#			1 2     1500         0
+#			2 1     1400         0
+#			2 2        0       450
+#koszt = 289100
 
 end;

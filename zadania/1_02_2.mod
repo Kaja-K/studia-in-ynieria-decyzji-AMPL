@@ -32,7 +32,6 @@ param godz_limit := 1400;
 param pole_limit := 100;  
 
 solve;
-
 display hektary, zysk; 
 # Wynik: 1 = 0, 2 = 53.8462, 3 = 46.1538, Profit = 20538.5
 
