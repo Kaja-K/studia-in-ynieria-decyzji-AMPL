@@ -49,6 +49,11 @@ param limit_tłuszcz:= 8;
 
 solve;
 display  liczebność, koszt; 
-# Wynik: 1 = 0.833333, 2 = 3.33333, 3 = 0.833333, 4 = 5, koszt = 1366.67
+# Wynik:
+# 1 = 0.833333 - Oznacza, że użyto 0.833333 kg produktu 1 w paszy.
+# 2 = 3.33333 - Oznacza, że użyto 3.33333 kg produktu 2 w paszy.
+# 3 = 0.833333 - Oznacza, że użyto 0.833333 kg produktu 3 w paszy.
+# 4 = 5 - Oznacza, że użyto 5 kg produktu 4 w paszy.
+#koszt = 1366.67
 
 end;

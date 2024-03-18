@@ -2,36 +2,43 @@ option solver cplex;
 reset;
 
 # Deklaracja parametrów
-set miesiac;  							# Zbiór miesięcy
-set lokata;  							# Zbiór lokat
-param przychody{miesiac};  				# Przychody w każdym miesiącu
-param rachunki{miesiac};  				# Rachunki do zapłacenia w każdym miesiącu
-param stopa_odsetek{lokata};  			# Oprocentowanie każdej lokaty
-param zwroty{lokata, miesiac, miesiac}; # Czy dana lokata osiąga zwrot w danym miesiącu
+param miesiac;                      # Zbiór miesięcy inwestowania
+param odsetki{1..miesiac};          # Odsetki w każdym miesiącu
+param przychody{1..miesiac};        # Przychody w każdym miesiącu
+param rachunki{1..miesiac};         # Rachunki do zapłacenia w każdym miesiącu
 
-# Zmienna decyzyjna - Kwota zainwestowana w każdej lokacie w każdym miesiącu
-var kwota{lokata, miesiac} >= 0;
+# Zmienne decyzyjne - lokaty
+var lokata_1{1..miesiac} >= 0;       # lokaty miesięczne w okresie 1 - miesiąc
+var lokata_2{1..miesiac} >= 0;       # lokaty dwu-miesięczne w okresie 1 - miesiąc
+var lokata_3{1..miesiac} >= 0;       # lokaty trzy-miesięczne w okresie 1 - miesiąc
+var lokata_4{1..miesiac} >= 0;       # lokaty cztero-miesięczne w okresie 1 - miesiąc
 
-# Funkcja celu - Maksymalizacja gotówki na koncie po wszystkich miesiącach
-maximize gotowka: sum {j in miesiac} sum{k in lokata} kwota[k,j] * stopa_odsetek[k] * zwroty [k ,j, "kwi"];
+# Funkcja celu - gotówka na koniec kazdego miesiąca
+maximize zysk: sum{i in 1..miesiac} (odsetki[i]*(lokata_1[i] + lokata_2[i] + lokata_3[i] + lokata_4[i]));
 
-# Ograniczenia 
-subject to ograniczenia{ i in miesiac}: przychody[i] - rachunki[i] -  (sum{ j in lokata}  kwota[j,i]) + (sum{n in miesiac}  sum{k in lokata} (kwota[k,n]*stopa_odsetek[k]*zwroty[k,n,i])) = 0;
-	
+# Ograniczenia gotóweka na koniec każdego miesiąca
+subject to o{ i in 1..miesiac}: przychody[i] 
+							+ if i>1 then odsetki[1]*lokata_1[i-1]
+							+ if i>2 then odsetki[2]*lokata_1[i-2]
+							+ if i>3 then odsetki[3]*lokata_1[i-3]
+							+ if i>4 then odsetki[4]*lokata_1[i-4]
+	 = rachunki[i]+lokata_1[i]+lokata_2[i]+lokata_3[i]+lokata_4[i];
+
 # Dane 
 data;
-set miesiac:= "sty" "lut" "mar" "kwi" ;
-set lokata:= "1_mies" "2_mies" "3_mies" "4_mies";
-param: przychody rachunki:= "sty" 900 600 "lut" 800 500 "mar" 300 500 "kwi" 300 250;
-param stopa_odsetek := "1_mies" 1.001 "2_mies" 1.005 "3_mies" 1.01 "4_mies" 1.02;
-param zwroty:= # Tworzy 64 linijki kombinacji [lokata, miesiac, miesiac] wartość zwrotu (0/1)
-	[*,*,sty]: "sty" "lut" "mar" "kwi":= "1_mies" 0 0 0 0 "2_mies" 0 0 0 0 "3_mies" 0 0 0 0 "4_mies" 0 0 0 0 
-	[*,*,lut]: "sty" "lut" "mar" "kwi":= "1_mies" 1 0 0 0 "2_mies" 0 0 0 0 "3_mies" 0 0 0 0 "4_mies" 0 0 0 0
-	[*,*,mar]: "sty" "lut" "mar" "kwi":= "1_mies" 0 1 0 0 "2_mies" 1 0 0 0 "3_mies" 0 0 0 0 "4_mies" 0 0 0 0
-	[*,*,kwi]: "sty" "lut" "mar" "kwi":= "1_mies" 0 0 1 0 "2_mies" 0 1 0 0 "3_mies" 1 0 0 0 "4_mies" 0 0 0 0;
+param miesiac := 4;
+param odsetki := 1 1.001 2 1.005 3 1.01 4 1.02;
+param przychody := 1 900 2 800 3 300 4 300;
+param rachunki := 1 600 2 500 3 500 4 250;
 
 solve;
-display gotowka, {i in miesiac, j in lokata: kwota[j,i] <> 0} kwota[j,i];
-#Wynik: gotowka = 403.701, kwi 4_mies = 453.701, lut 1_mies = 199.8 ,lut 2_mies = 100.2 ,sty 3_mies = 300
+display lokata_1, lokata_2, lokata_3, lokata_4, zysk;
+# Wynik:  	
+#						lokata_1 lokata_2 lokata_3 lokata_4
+#	styczeń 	 300         0        0        0
+#	luty   		 600.3       0        0        0
+#	marzec    	 702.4       0        0        0
+#	kwiecień	   0         0        0     1659.4
+# zysk = 3305.62
 
 end;

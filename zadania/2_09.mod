@@ -24,8 +24,8 @@ data;
 param hurtownie := 4; 
 param fabryki := 3; 
 param c := 1 1 2 1 2 4 1 3 1 1 4 5 2 1 5 2 2 1 2 3 3 2 4 3 3 1 1 3 2 2 3 3 4 3 4 1;
-param podaż := [1] 200 [2] 100 [3] 300;  		
-param popyt := [1] 250 [2] 250 [3] 75 [4] 25; 
+param podaż := 1 200 2 100 3 300;  		
+param popyt := 1 250 2 250 3 75 4 25; 
 
 solve;
 display przewiezione, koszt;

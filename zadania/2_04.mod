@@ -41,11 +41,12 @@ param magazyn:= 200;
 
 solve;
 display gotowka, k_kupiona, k_sprzedana, k_magazyn, zysk;
-# Wynik: gotowka k_kupiona k_sprzedana k_magazyn
-#	1   18000       0         50         50
-#	2   20000     205         75        180
-#	3   45000       0        100         80
-#	4   77000       0         80          0
+# Wynik: 
+#	miesiąc	gotowka k_kupiona k_sprzedana k_magazyn
+#	1   	18000       0         50         50
+#	2   	20000     205         75        180
+#	3   	45000       0        100         80
+#	4   	77000       0         80          0
 # Zysk = 77000
 
 end;
