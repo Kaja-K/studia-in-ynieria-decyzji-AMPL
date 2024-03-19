@@ -19,8 +19,8 @@ maximize zysk: sum{i in 1..n}kotlety[i]*cena[i] - sum{i in 1..n}indyki[i]*koszt[
 
 # Ograniczenia
 subject to
-o_bialy:sum{i in 1..n} indyki[i]*biale[i] >= sum{i in 1..n}kotlety[i]*proc_b[i]; 									# Zawartość mięsa białego
-o_ciemny:sum{i in 1..n} indyki[i]*ciemne[i] >= sum{i in 1..n}kotlety[i]*(1-proc_b[i]);  							# Zawartość mięsa ciemnego
+o_bialy:sum{i in 1..n} indyki[i]*biale[i] >= sum{i in 1..n}kotlety[i]*proc_b[i]; 			# Zawartość mięsa białego
+o_ciemny:sum{i in 1..n} indyki[i]*ciemne[i] >= sum{i in 1..n}kotlety[i]*(1-proc_b[i]);  	# Zawartość mięsa ciemnego
 
 # Dane
 data;
