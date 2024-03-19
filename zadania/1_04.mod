@@ -15,10 +15,10 @@ param Mn_limit;       	  # Minimalna zawartość pierwiastka Mn w mieszance
 param P_limit;        	  # Minimalna zawartość pierwiastka P w mieszance
 
 # Definicja zmiennych decyzyjnych -  Ilość ton każdego stopu użytego w mieszance
-var ilość_ton{i in 1..stopy} >= 0;
+var ilość_ton{i in 1..stopy}, integer, >= 0;
 
 # Funkcja celu do zminimalizowania kosztów mieszanki
-minimize Profit: sum{i in 1..stopy} koszt[i]*ilość_ton[i];  
+minimize koszty: sum{i in 1..stopy} koszt[i]*ilość_ton[i];  
 
 # Ograniczenia
 subject to
@@ -30,7 +30,7 @@ o_Mix: sum{i in 1..stopy} ilość_ton[i] = mix_limit;                 # Ilość 
 
 # Dane
 data;
-param stopy:=3;                        
+param stopy := 3;                        
 param koszt:= 1 200 2 150 3 400; 
 param C:= 1 0.28 2 0.14 3 0.1; 
 param Si:= 1 0.1 2 0.12 3 0.06; 
@@ -43,7 +43,7 @@ param Mn_limit:=0.25;
 param P_limit:=0.12;                 
 
 solve;
-display ilość_ton, Profit;
-# Wynik: 1 = 869.565, 2 = 1086.96, 3 = 3043.48, Profit = 1554350
+display ilość_ton, koszty;
+# Wynik: 1 = 869.565, 2 = 1086.96, 3 = 3043.48, koszty = 1554350
 
 end;
