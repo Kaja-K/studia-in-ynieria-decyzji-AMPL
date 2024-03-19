@@ -28,7 +28,7 @@ o_Mn: sum{i in 1..stopy} ilość_ton[i]*Mn[i] >= Mn_limit*mix_limit;  # Minimaln
 o_P: sum{i in 1..stopy} ilość_ton[i]*P[i] >= P_limit*mix_limit;    	# Minimalna zawartość pierwiastka P w mieszance
 o_Mix: sum{i in 1..stopy} ilość_ton[i] = mix_limit;                 # Ilość ton mieszanki
 
-# Przypisanie wartości parametrów
+# Dane
 data;
 param stopy:=3;                        
 param koszt:= [1] 200 [2] 150 [3] 400; 
