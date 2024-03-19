@@ -24,10 +24,10 @@ o_godz: sum{i in 1..opcje} hektary[i]*godziny[i] <= godz_limit;	# Godziny pracy
 # Przypisanie wartości parametrów
 data;
 param opcje := 3;  						
-param koszt := [1] 30 [2] 50 [3] 40; 	
-param wartość := [1] 10 [2] 8 [3] 5;  	
-param godziny := [1] 12 [2] 20 [3] 7;  	
-param produkt := [1] 560 [2] 480 [3] 500; 
+param koszt := 1 30 2 50 3 40; 	
+param wartość := 1 10 2 8 3 5;  	
+param godziny := 1 12 2 20 3 7;  	
+param produkt := 1 560 2 480 3 500; 
 param godz_limit := 1400;  		
 param pole_limit := 100;  
 

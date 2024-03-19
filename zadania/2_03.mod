@@ -25,11 +25,11 @@ o_inwestowanie{j in 1..lata, i in 1..projekty}: pieniadze[j,i] = pieniadze[j,i] 
 # Dane
 data;
 param projekty:=4;
-param koszt:= [1] 5 [2] 8 [3] 15 [4] 1.2;
-param przychod:= [1] 0.05 [2] 0.07 [3] 0.15 [4] 0.02;
-param ukonczenie:= [1] 1 [2] 0.25 [3] 0.25 [4] 1;
+param koszt:= 1 5 2 8 3 15 4 1.2;
+param przychod:= 1 0.05 2 0.07 3 0.15 4 0.02;
+param ukonczenie:= 1 1 2 0.25 3 0.25 4 1;
 param lata:=5;
-param budzet:= [1] 3 [2] 6 [3] 7 [4] 7 [5] 7;
+param budzet:= 1 3 2 6 3 7 4 7 5 7;
 param inwestowanie:= 1 1 1 1 2 0 1 3 1 1 4 0 2 1 1 2 2 1 2 3 1 2 4 0 3 1 1 3 2 1 3 3 1 3 4 1 4 1 0 4 2 1 4 3 1 4 4 1 5 1 0 5 2 1 5 3 1 5 4 0;
 
 solve;

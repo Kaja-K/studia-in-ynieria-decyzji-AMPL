@@ -32,11 +32,11 @@ o_sprzedaż{i in 1..liczba_miesiecy}: k_sprzedana[i] <= popyt[i];  												#
 # Dane
 data;
 param liczba_miesiecy:=4;
-param popyt:= [1] 50 [2] 75 [3] 100 [4] 80;
+param popyt:= 1 50 2 75 3 100 4 80;
 param gotowka_start:= 2000;
 param k_start:= 100;
-param koszt:= [1] 200 [2] 100 [3] 200 [4] 300; 
-param cena:= [1] 320 [2] 300 [3] 250 [4] 400;
+param koszt:= 1 200 2 100 3 200 4 300; 
+param cena:= 1 320 2 300 3 250 4 400;
 param magazyn:= 200;
 
 solve;

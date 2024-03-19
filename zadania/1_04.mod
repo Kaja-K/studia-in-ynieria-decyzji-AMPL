@@ -31,11 +31,11 @@ o_Mix: sum{i in 1..stopy} ilość_ton[i] = mix_limit;                 # Ilość 
 # Dane
 data;
 param stopy:=3;                        
-param koszt:= [1] 200 [2] 150 [3] 400; 
-param C:= [1] 0.28 [2] 0.14 [3] 0.1; 
-param Si:= [1] 0.1 [2] 0.12 [3] 0.06; 
-param Mn:= [1] 0.3 [2] 0.2 [3] 0.3;   
-param P:= [1] 0.1 [2] 0.1 [3] 0.15;   
+param koszt:= 1 200 2 150 3 400; 
+param C:= 1 0.28 2 0.14 3 0.1; 
+param Si:= 1 0.1 2 0.12 3 0.06; 
+param Mn:= 1 0.3 2 0.2 3 0.3;   
+param P:= 1 0.1 2 0.1 3 0.15;   
 param mix_limit:=5000;           
 param C_limit:=0.14;               
 param Si_limit:=0.08;               

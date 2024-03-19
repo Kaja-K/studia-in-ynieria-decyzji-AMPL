@@ -34,12 +34,12 @@ o_popyt: sum{i in 1..produkty} liczebność[i] = popyt;  									 # Ilość uż
 # Dane wejściowe
 data;
 param produkty:=4;  									
-param cena:= [1] 200 [2] 120 [3] 240 [4] 120;  		
-param limit:= [1] 6 [2] 10 [3] 4 [4] 5;  			
-param witaminy:= [1] 8 [2] 10 [3] 6 [4] 8;  		
-param białko:= [1] 6 [2] 5 [3] 10 [4] 6; 		 	
-param sole_mineralne:= [1] 10 [2] 12 [3] 6 [4] 6;  
-param tłuszcz:= [1] 4 [2] 8 [3] 6 [4] 9;  			
+param cena:= 1 200 2 120 3 240 4 120;  		
+param limit:= 1 6 2 10 3 4 4 5;  			
+param witaminy:= 1 8 2 10 3 6 4 8;  		
+param białko:= 1 6 2 5 3 10 4 6; 		 	
+param sole_mineralne:= 1 10 2 12 3 6 4 6;  
+param tłuszcz:= 1 4 2 8 3 6 4 9;  			
 param popyt:= 10;  									
 param wit_limit1:= 6;  							
 param wit_limit2:= 10;  							
