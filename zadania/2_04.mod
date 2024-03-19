@@ -47,6 +47,6 @@ display gotowka, k_kupiona, k_sprzedana, k_magazyn, zysk;
 #	2   	20000     205         75        180
 #	3   	45000       0        100         80
 #	4   	77000       0         80          0
-# Zysk = 77000
+# Zysk = 77000   --> tu Źle coś jest 
 
 end;

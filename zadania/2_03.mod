@@ -35,11 +35,7 @@ param inwestowanie:= 1 1 1 1 2 0 1 3 1 1 4 0 2 1 1 2 2 1 2 3 1 2 4 0 3 1 1 3 2 1
 solve;
 display pieniadze, zysk;
 # Wynik:
-# W trzecim roku zainwestowano 0.8 jednostek pieniędzy w projekt 3.
-# W trzecim roku zainwestowano 1.2 jednostek pieniędzy w projekt 4.
-# W czwartym roku zainwestowano 1.8 jednostek pieniędzy w projekt 2.
-# W czwartym roku zainwestowano 5.2 jednostek pieniędzy w projekt 3.
-# W piątym roku zainwestowano 0.2 jednostek pieniędzy w projekt 2. 
+# 1 3 = 3,2 3 = 6,  3 3 = 0.8, 3 4 = 1.2, 4 2 = 1.8, 4 3 = 5.2, 5 2 = 0.2
 # zysk = 0.52375
 
 end;
