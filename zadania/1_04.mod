@@ -15,7 +15,7 @@ param Mn_limit;       	  # Minimalna zawartość pierwiastka Mn w mieszance
 param P_limit;        	  # Minimalna zawartość pierwiastka P w mieszance
 
 # Definicja zmiennych decyzyjnych -  Ilość ton każdego stopu użytego w mieszance
-var ilość_ton{i in 1..stopy}, integer, >= 0;
+var ilość_ton{i in 1..stopy}, >= 0;
 
 # Funkcja celu do zminimalizowania kosztów mieszanki
 minimize koszty: sum{i in 1..stopy} koszt[i]*ilość_ton[i];  
