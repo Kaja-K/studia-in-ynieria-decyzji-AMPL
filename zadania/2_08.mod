@@ -1,30 +1,70 @@
 option solver cplex;
 reset;
 
-# Zmienne decyzyjne
-var x_82{1..3}>=0;     	# Ilość 82 w danym typie benzyny
-var x_98{1..3}>=0;		# Ilość 98 w danym typie benzyny
+# Deklaracja parametrów
+param maks_popyt_82_normalna >= 0;       # Maksymalny popyt na benzynę 82 w typie normalna
+param maks_popyt_98_normalna >= 0;       # Maksymalny popyt na benzynę 98 w typie normalna
+param maks_popyt_82_premium >= 0;        # Maksymalny popyt na benzynę 82 w typie premium
+param maks_popyt_98_premium >= 0;        # Maksymalny popyt na benzynę 98 w typie premium
+param maks_popyt_82_super >= 0;          # Maksymalny popyt na benzynę 82 w typie super
+param maks_popyt_98_super >= 0;          # Maksymalny popyt na benzynę 98 w typie super
+param cena_82;                           # Cena benzyny 82
+param cena_98;                           # Cena benzyny 98
+param minimalne_zuzycie_82_normalna;    # Minimalne zużycie benzyny 82 w typie normalna
+param minimalne_zuzycie_98_normalna;    # Minimalne zużycie benzyny 98 w typie normalna
+param minimalne_zuzycie_82_premium;     # Minimalne zużycie benzyny 82 w typie premium
+param minimalne_zuzycie_98_premium;     # Minimalne zużycie benzyny 98 w typie premium
+param minimalne_zuzycie_82_super;       # Minimalne zużycie benzyny 82 w typie super
+param minimalne_zuzycie_98_super;       # Minimalne zużycie benzyny 98 w typie super
+param maks_dzienny_popyt;                # Maksymalny dzienny popyt na benzynę
+param maks_przetwarzania_98;             # Maksymalna ilość benzyny 98 do przetworzenia
 
-# Funkcja celu - maksymalizacja całkowitego zysku, porzychody ze sprzedaży poszczególnych benzyn
-maximize zysk: 6.7 * (x_82[1]+x_98[1]) + 9.2 * (x_82[2]+x_98[2]) + 8.1 * (x_82[3]+x_98[3]);
+# Zmienne decyzyjne
+var x_82{1..3} >= 0;    # Ilość 82 w danym typie benzyny
+var x_98{1..3} >= 0;    # Ilość 98 w danym typie benzyny
+
+# Funkcja celu - maksymalizacja całkowitego zysku
+maximize zysk: cena_82 * (x_82[1] + x_98[1]) + cena_82 * (x_82[2] + x_98[2]) + cena_82 * (x_82[3] + x_98[3]);
 
 # Ograniczenia
 subject to 
-o_popyt87: x_82[1] + x_98[1]<= 50000; 											# Popyt na benzynę 82 i 98 w typie normalna
-o_popyt89: x_82[2] + x_98[2]<= 30000; 											# Popyt na benzynę 82 i 98 w typie premium
-o_popyt92: x_82[3] + x_98[3]<= 40000; 											# Popyt na benzynę 82 i 98 w typie super
-o_min87: (82* x_82[1] + 98 * x_98[1]) >= 87 * (x_82[1] + x_98[1]); 				# Minimalna ilość benzyny 82 i 98 w typie normalna
-o_min89: (82* x_82[2] + 98 * x_98[2]) >= 89 * (x_82[2] + x_98[2]); 				# Minimalna ilość benzyny 82 i 98 w typie premium
-o_min92: (82* x_82[3] + 98 * x_98[3]) >= 92 * (x_82[3] + x_98[3]); 				# Minimalna ilość benzyny 82 i 98 w typie super
-o_dz: 5* (x_82[1]+x_82[2]+x_82[3]) +10 * (x_98[1]+ x_98[2] + x_98[3]) <=1500000;# Całkowity dzienny popyt na benzynę
-o_przetwarzania: 2 * (x_98[1]+ x_98[2] + x_98[3]) <= 200000; 					# Przetwarzanie benzyny 98
+o_popyt87: x_82[1] + x_98[1] <= maks_popyt_82_normalna + maks_popyt_98_normalna;
+o_popyt89: x_82[2] + x_98[2] <= maks_popyt_82_premium + maks_popyt_98_premium;
+o_popyt92: x_82[3] + x_98[3] <= maks_popyt_82_super + maks_popyt_98_super;
+o_min87: (82 * x_82[1] + 98 * x_98[1]) >= 87 * (x_82[1] + x_98[1]);
+o_min89: (82 * x_82[2] + 98 * x_98[2]) >= 89 * (x_82[2] + x_98[2]);
+o_min92: (82 * x_82[3] + 98 * x_98[3]) >= 92 * (x_82[3] + x_98[3]);
+o_dz: 5 * (x_82[1] + x_82[2] + x_82[3]) + 10 * (x_98[1] + x_98[2] + x_98[3]) <= maks_dzienny_popyt;
+o_przetwarzania: 2 * (x_98[1] + x_98[2] + x_98[3]) <= maks_przetwarzania_98;
+
+data;
+param maks_popyt_82_normalna := 50000;       # Maximum demand for 82-grade normal gasoline
+param maks_popyt_98_normalna := 50000;       # Maximum demand for 98-grade normal gasoline
+param maks_popyt_82_premium := 30000;        # Maximum demand for 82-grade premium gasoline
+param maks_popyt_98_premium := 30000;        # Maximum demand for 98-grade premium gasoline
+param maks_popyt_82_super := 40000;          # Maximum demand for 82-grade super gasoline
+param maks_popyt_98_super := 40000;          # Maximum demand for 98-grade super gasoline
+param cena_82 := 6.7;                        # Price of 82-grade gasoline
+param cena_98 := 9.2;                        # Price of 98-grade gasoline
+param minimalne_zuzycie_82_normalna := 87;   # Minimum consumption of 82-grade normal gasoline
+param minimalne_zuzycie_98_normalna := 87;   # Minimum consumption of 98-grade normal gasoline
+param minimalne_zuzycie_82_premium := 89;    # Minimum consumption of 82-grade premium gasoline
+param minimalne_zuzycie_98_premium := 89;    # Minimum consumption of 98-grade premium gasoline
+param minimalne_zuzycie_82_super := 92;      # Minimum consumption of 82-grade super gasoline
+param minimalne_zuzycie_98_super := 92;      # Minimum consumption of 98-grade super gasoline
+param maks_dzienny_popyt := 1500000;         # Maximum daily demand
+param maks_przetwarzania_98 := 200000;
 
 solve;
-display x_82, x_98, zysk;
-# Wynik: 	 x_82    x_98    
-# normalna  34375   15625
-# premium   16875   13125
-# super   	15000   25000
-# zysk = 93500000
+
+display x_82,x_98, zysk;
+# Wynik::    x_82      x_98  
+#		1   68750     31250
+#		2   33750     26250
+#		3   19038.5   31730.8
+
+# Zysk = 1412150
 
 end;
+
+
