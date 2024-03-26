@@ -18,13 +18,15 @@ var magazyn{1..T} >= 0;            	 # Magazyn w okresie t
 var niesprzedane{1..T} >= 0;         # Niesprzedany popyt w okresie t
 
 # Funkcja celu: maksymalizacja zysku  (dochod ze sprzedazy - koszty produkcji - koszty magazynowania - koszty niesprzedanego popytu)
-maximize zysk: sum{t in 1..T} (q[t] * (d[t] - niesprzedane[t]) - c[t] * produkcja[t] - m[t] * magazyn[t] - b[t] * niesprzedane[t]);
+maximize zysk: sum{t in 1..T} (q[t] * niesprzedane[t] - c[t] * produkcja[t] - m[t] * magazyn[t] - b[t] * (d[t] - niesprzedane[t]));
 
 # Ograniczenia
 subject to 
-o_popyt{t in 1..T}: niesprzedane[t] <= d[t];						# Ograniczenie popytu - (niesprzedane[t]) nie przekracza oszacowanego popytu (d[t]) w każdym z okresów (t)
-o_magazyn{t in 1..T}: magazyn[t] = if(t=1) then 0 					# Równowaga magazynowa - (magazyn[t]) jest równy stanowi magazynu z poprzedniego okresu (magazyn[t-1]), 
-	else magazyn[t-1] + produkcja[t] - d[t] + niesprzedane[t-1];	#z dodaną produkcją, pomniejszoną o oszacowany popyt oraz z dodanym niesprzedanym popytem z poprzedniego okresu	
+o_popyt{t in 1..T}: niesprzedane[t] <= d[t];											# Popyt (niesprzedane - oszacowany popyt) 
+o_magazyn: magazyn[1] = produkcja[1] - niesprzedane[1];									# Stan początkowy magazynu
+o_rórownowaga{t in 2..T}:	magazyn[t] = magazyn[t-1] + produkcja[t] - niesprzedane[t]; # Równowaga magazynowa
+o_produkcja1 {t in 2..T}: produkcja[t] - produkcja[t-1] <= produkcja[t-1];				# Zmiana produkcji między miesiącami - dla wzrostu
+o_produkcja2 {t in 2..T}: -p * produkcja[t-1] <= (produkcja[t] - produkcja[t-1]);		# Zmiana produkcji między miesiącami - dla spadku
 
 # Dane																																																				
 data;
@@ -41,15 +43,16 @@ param p:=0.15;
 solve;
 display produkcja, magazyn, niesprzedane, zysk;
 # Wynik:  okres produkcja magazyn niesprzedane
-#			1      180        0       200
-#			2      250      270       180
-#			3      250      400       300
-#			4      250      720       230
-#			5      250      900       300
-#			6      250      650       800
-#			7      250      600       250
-#			8      250      200         0
-#			9      250       50         0
-#			10     250        0         0
+#			1      250      250         0
+#			2      250      500         0
+#			3      250      750         0
+#			4      250     1000         0
+#			5      250     1250         0
+#			6      250     1500         0
+#			7      250      850       900
+#			8      250      200       900
+#			9      250       50       400
+#			10     250        0       300
 # zysk = 387620
 
+end;
