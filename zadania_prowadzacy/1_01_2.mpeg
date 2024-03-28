@@ -1,0 +1,23 @@
+############
+# BO-L1-P01c
+############
+option solver cplex;                              # choose solver
+reset;                                            # start new model
+param n > 0, integer;                             # declaration of parameters
+param p{1..n};                                    # parameter / profit (per unit)
+param d{1..n};                                    # parameter / demand
+param h{1..n};                                    # parameter / hours (per unit)
+param h_total;                                    # parameter / total avail hours
+var x{i in 1..n} >= 0, <= d[i];                   # decision variables with bounds
+maximize profit: sum{i in 1..n} p[i] * x[i];      # objective function
+subject to                                        # constraints will follow...
+workload: sum{i in 1..n} h[i] * x[i] <= h_total;  # constraint / workload
+data;						  # data will follow...
+param n:= 2;
+param p:= [1] 120 [2] 80;
+param d:= [1]  20 [2] 40;
+param h:= [1]  20 [2] 10;
+param h_total := 500;
+solve;                                            # solve the model
+display x, profit;                                # display the results
+end;

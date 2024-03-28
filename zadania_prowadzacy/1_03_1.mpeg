@@ -1,0 +1,31 @@
+############
+# BO-L1-P03a
+############		
+option solver cplex;            # choose solver
+reset;                          # start new model
+var x1 >=0,  integer;           # number of kg of cutlet I
+var x2 >=0,  integer;           # number of kg of cutlet II
+var y1 >= 0, integer;           # number of turkeys type 1
+var y2 >= 0, integer;           # number of turkeys type 2
+maximize profit: (8 * x1 + 6 * x2) - (10 * y1 + 8 * y2);
+subject to
+c1:   x1 <= 50;
+c2:   x2 <= 30; 
+c3:   3 * y1 + 1.5 * y2 >= 0.7 * x1 + 0.5 * x2;       # mieso biale
+c4: # ...                                             # mieso ciemne
+solve;                                                # solve the model
+display x1, x2, y1, y2, profit;                       # display the results					  
+end;
+#
+##################################################################
+#
+# CPLEX 20.1.0.0: optimal integer solution; objective 410
+# 2 MIP simplex iterations
+# 0 branch-and-bound nodes
+# x1 = 50
+# x2 = 30
+# y1 = 17
+# y2 = 0
+# profit = 410
+# 
+##################################################################

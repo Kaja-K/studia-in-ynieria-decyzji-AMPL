@@ -7,7 +7,7 @@ param d{1..T}; # Oszacowany popyt w okresie t
 param q{1..T}; # Cena sprzedaży w okresie t
 param c{1..T}; # Koszt produkcji w okresie t
 param m{1..T}; # Koszt magazynowania w okresie t
-param b{1..T}; # Koszt niesprzedanego popytu w okresie t
+param b{1..T}; # Koszt sprzedanego popytu w okresie t
 param LB;      # Dolne ograniczenie początkowej produkcji
 param UB;      # Górne ograniczenie początkowej produkcji
 param p;       # Maksymalna zmiana produkcji w kolejnych okresach (w procentach)
@@ -15,18 +15,18 @@ param p;       # Maksymalna zmiana produkcji w kolejnych okresach (w procentach)
 # Zmienne decyzyjne
 var produkcja{1..T} >= LB, <= UB; 	 # Produkcja w okresie t
 var magazyn{1..T} >= 0;            	 # Magazyn w okresie t
-var niesprzedane{1..T} >= 0;         # Niesprzedany popyt w okresie t
+var sprzedane{1..T} >= 0;         	 # Sprzedane w okresie t
 
-# Funkcja celu: maksymalizacja zysku  (dochod ze sprzedazy - koszty produkcji - koszty magazynowania - koszty niesprzedanego popytu)
-maximize zysk: sum{t in 1..T} (q[t] * niesprzedane[t] - c[t] * produkcja[t] - m[t] * magazyn[t] - b[t] * (d[t] - niesprzedane[t]));
+# Funkcja celu: maksymalizacja zysku  (dochod ze sprzedazy - koszty produkcji - koszty magazynowania - koszty sprzedanego popytu)
+maximize zysk: sum{t in 1..T} (q[t] * sprzedane[t] - c[t] * produkcja[t] - m[t] * magazyn[t] - b[t] * (d[t] - sprzedane[t]));
 
 # Ograniczenia
 subject to 
-o_popyt{t in 1..T}: niesprzedane[t] <= d[t];											# Popyt (niesprzedane - oszacowany popyt) 
-o_magazyn: magazyn[1] = produkcja[1] - niesprzedane[1];									# Stan początkowy magazynu
-o_rórownowaga{t in 2..T}:	magazyn[t] = magazyn[t-1] + produkcja[t] - niesprzedane[t]; # Równowaga magazynowa
-o_produkcja1 {t in 2..T}: produkcja[t] - produkcja[t-1] <= produkcja[t-1];				# Zmiana produkcji między miesiącami - dla wzrostu
-o_produkcja2 {t in 2..T}: -p * produkcja[t-1] <= (produkcja[t] - produkcja[t-1]);		# Zmiana produkcji między miesiącami - dla spadku
+o_popyt{t in 1..T}: sprzedane[t] <= d[t];											# Popyt (sprzedane <= oszacowany popyt) 
+o_magazyn: magazyn[1] = produkcja[1] - sprzedane[1];								# Stan początkowy magazynu
+o_rórownowaga{t in 2..T}:	magazyn[t] = magazyn[t-1] + produkcja[t] - sprzedane[t];# Równowaga magazynowa
+o_produkcja1 {t in 2..T}: produkcja[t] - produkcja[t-1] <= produkcja[t-1];			# Zmiana produkcji między miesiącami - dla wzrostu
+o_produkcja2 {t in 2..T}: -p * produkcja[t-1] <= (produkcja[t] - produkcja[t-1]);	# Zmiana produkcji między miesiącami - dla spadku
 
 # Dane																																																				
 data;
@@ -41,8 +41,8 @@ param UB:=250;
 param p:=0.15;
 
 solve;
-display produkcja, magazyn, niesprzedane, zysk;
-# Wynik:  okres produkcja magazyn niesprzedane
+display produkcja, magazyn, sprzedane, zysk;
+# Wynik:  okres produkcja magazyn sprzedane
 #			1      250      250         0
 #			2      250      500         0
 #			3      250      750         0

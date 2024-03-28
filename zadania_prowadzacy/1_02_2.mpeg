@@ -1,0 +1,30 @@
+############
+# BO-L1-P02c
+############		
+option solver cplex;         # choose solver
+reset;                       # start new model
+param n > 0, integer;        # declaration of parameters, n is the number of crops
+param a;                     # total area in hectares
+param d{1..n};               # demand for crop of type $i$
+param t{1..n};               # tonnes per hectar, for crop of type $i$
+param p{1..n};               # price for 1 tonne of crop $i$
+param h{1..n};               # hours per hectar for crop of type $i$
+param c;                     # parameter $c$ \ is the cost of 1 hour of farmer's work \\
+param h_total;               # parameter / total avail hours
+var x{i in 1..n} >= 0, <= d[i] / t[i];             # decision variables with bounds
+maximize profit: sum{i in 1..n} p[i] * t[i] * x[i] - c * sum{i in 1..n} h[i] * x[i];
+subject to                                         # constraints
+workload: sum{i in 1..n} h[i] * x[i] <= h_total;   # c / workload
+area:     sum{i in 1..n} x[i] <= a;                # c / area
+data;                                              # data modified: n := 3
+param n := 3;
+param a := 100;
+param d := [1] 560 [2] 480 [3] 500;
+param t := [1]  10 [2]   8 [3]   5;
+param p := [1]  30 [2]  50 [3]  40;
+param h := [1]  12 [2]  20 [3]   7;
+param c := 10;
+param h_total := 1400;
+solve;                       # solve the model
+display x, profit;           # display the results
+end;
