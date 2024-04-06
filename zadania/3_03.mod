@@ -1,23 +1,46 @@
 option solver cplex;
 reset;
 
-param wyplaty {1..3, 1..3};  # Deklaracja parametru
+# Model dla gracza 1
 
-# Zmienne decyzyjne
-var strategia_gracza_1 {1..3} >= 0; # Strategie gracza 1: kamień, papier, nożyce
-var strategia_gracza_2 {1..3} >= 0; # Strategie gracza 2: kamień, papier, nożyce
+# Deklaracje
+set GRA; # Zbiór możliwych ruchów
+param wypłata {GRA, GRA}; # Tablica wypłat
 
-# Funkcja celu - maksymalizacja oczekiwanej wartości dla gracza 1
-maximize wartosc_oczekiwana: sum{i in 1..3, j in 1..3} wyplaty[i,j] * strategia_gracza_1[i] * strategia_gracza_2[j];
+var x {GRA} >= 0, <= 1; # Strategie dla gracza 1
+var y {GRA} >= 0, <= 1; # Strategie dla gracza 2
 
-# Ograniczenia - każdy gracz wybiera dokładnie jedną strategię
-o_s1: sum{i in 1..3} strategia_gracza_1[i] = 1;
-o_s2: sum{j in 1..3} strategia_gracza_2[j] = 1;
+# Cel dla gracza 1
+maximize z: sum {i in GRA, j in GRA} wypłata[i,j] * x[i] * y[j];
 
-# Dane
+minimize z2: sum {i in GRA, j in GRA} -wypłata[i,j] * x[i] * y[j];
+
+# Ograniczenia
+subject to SumaStrategiiGracza1: sum {i in GRA} x[i] = 1;
+subject to SumaStrategiiGracza2: sum {j in GRA} y[j] = 1;
+
+# Dane dla modelu
 data;
-param wyplaty := 1 1 0 -1 2 0 1 -1 3 -1 1 0;
-    
+
+set GRA := kamien papier nozyce;
+
+param wypłata :  kamien papier nozyce :=
+kamien   0 -1  1
+papier   1  0 -1
+nozyce  -1  1  0;
+
+# Rozwiązanie
 solve;
 
-display strategia_gracza_1, strategia_gracza_2, wartosc_oczekiwana;
+# Wyświetlanie wyników
+printf "Gracz 1  = %f\n", z;
+printf "Optymalne strategie dla gracza 1:\n";
+for {i in GRA} {
+ if x[i] > 0 then printf "%s: %f\n", i, x[i];
+}
+
+printf "Gracz 2  = %f\n", z2;
+printf "Optymalne strategie dla gracza 2 (jako model dualny):\n";
+for {j in GRA} {
+ if y[j] > 0 then printf "%s: %f\n", j, y[j];
+}
