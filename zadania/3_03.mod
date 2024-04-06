@@ -1,46 +1,43 @@
 option solver cplex;
+option cplex_options 'sensitivity';  # Opcje CPLEX
+
 reset;
 
-# Model dla gracza 1
+# Parametry
+param m;  # Liczba strategii dla gracza 1
+param n;  # Liczba strategii dla gracza 2
+param A;
 
-# Deklaracje
-set GRA; # Zbiór możliwych ruchów
-param wypłata {GRA, GRA}; # Tablica wypłat
+# Zmienne decyzyjne
+var p{1..m} >= 0;  # Strategie mieszane gracza 1
+var t;             # Zmienna celu - wypłata
 
-var x {GRA} >= 0, <= 1; # Strategie dla gracza 1
-var y {GRA} >= 0, <= 1; # Strategie dla gracza 2
-
-# Cel dla gracza 1
-maximize z: sum {i in GRA, j in GRA} wypłata[i,j] * x[i] * y[j];
-
-minimize z2: sum {i in GRA, j in GRA} -wypłata[i,j] * x[i] * y[j];
+# Funkcja celu
+maximize payoff: t;  # Maksymalizacja wypłaty
 
 # Ograniczenia
-subject to SumaStrategiiGracza1: sum {i in GRA} x[i] = 1;
-subject to SumaStrategiiGracza2: sum {j in GRA} y[j] = 1;
+q{j in 1..n}: t <= sum{i in 1..m} p[i] * A[i,j];  # Ograniczenie dla gracza 2
+c1: sum{i in 1..m} p[i] = 1;                      # Suma prawdopodobieństw strategii gracza 1 równa się 1
 
-# Dane dla modelu
+# Dostarczenie danych
 data;
 
-set GRA := kamien papier nozyce;
+param m := 3;  # Liczba strategii dla gracza 1 (kamień, papier, nożyce)
+param n := 3;  # Liczba strategii dla gracza 2 (kamień, papier, nożyce)
+param A : 1 2 3 := 1 0 -1 1 2 1 0 -1 s3 -1 1 0;
 
-param wypłata :  kamien papier nozyce :=
-kamien   0 -1  1
-papier   1  0 -1
-nozyce  -1  1  0;
-
-# Rozwiązanie
+# Rozwiązanie modelu i wyświetlenie wyników
 solve;
 
-# Wyświetlanie wyników
-printf "Gracz 1  = %f\n", z;
-printf "Optymalne strategie dla gracza 1:\n";
-for {i in GRA} {
- if x[i] > 0 then printf "%s: %f\n", i, x[i];
+printf "Wartość gry (wypłata): %f\n", payoff;
+printf "Strategie mieszane gracza 1 (p):\n";
+for {i in 1..m} {
+    printf "Strategia %d: %f\n", i, p[i];
 }
 
-printf "Gracz 2  = %f\n", z2;
-printf "Optymalne strategie dla gracza 2 (jako model dualny):\n";
-for {j in GRA} {
- if y[j] > 0 then printf "%s: %f\n", j, y[j];
+printf "Strategie mieszane gracza 2 (q - optymalne rozwiązanie dualne):\n";
+for {j in 1..n} {
+    printf "Strategia %d: %f\n", j, q[j];
 }
+
+end;
