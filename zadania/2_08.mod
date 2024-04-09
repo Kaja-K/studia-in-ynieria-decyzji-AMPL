@@ -19,18 +19,18 @@ maximize zysk: sum{i in Benzyny, j in podprodukty} cena[i]*ilosc_podproduktow[i,
 
 # Ograniczenia
 
-# Ograniczenie sprzedaży benzyny - suma ilości każdego poproduktu j w benzynie i nie przekracza popytu na tę benzynę
-o_sprzedaz{i in Benzyny}: sum{j in podprodukty} ilosc_podproduktow[i,j] <= popyt[i];
-
-# Ograniczenie technologiczne - suma iloczynów liczby oktanowej każdego poproduktu j w benzynie i musi być większa lub równa liczbie oktanowej danej benzyny pomnożonej przez sumę ilości każdego poproduktu j w tej benzynie
-o_technologia{i in Benzyny}: sum{j in podprodukty}oktany_podproduktow[j]*ilosc_podproduktow[i,j]>= 
-								liczba_oktanowa[i]*sum{j in podprodukty} ilosc_podproduktow[i,j];
-
-# Ograniczenie krakowania - dwukrotność ilości poproduktu ON98 w każdej benzynie nie przekracza limitu krakowania
-o_krakowania:2*sum{i in Benzyny}ilosc_podproduktow[i,"ON98"]<=limit_krakowania;
-
-# Ograniczenie destylacji - pięciokrotność ilości poproduktu ON82 oraz dwukrotność ilości poproduktu ON98 w każdej benzynie nie przekracza podaży benzyny
-o_destylacja:5*(sum{i in Benzyny}ilosc_podproduktow[i,"ON82"]+2*sum{i in Benzyny}ilosc_podproduktow[i,"ON98"])<= podaz_benzyny;
+	# Sprzedaży benzyny - suma ilości każdego poproduktu j w benzynie i nie przekracza popytu na tę benzynę
+	o_sprzedaz{i in Benzyny}: sum{j in podprodukty} ilosc_podproduktow[i,j] <= popyt[i];
+	
+	# Technologiczne - suma iloczynów liczby oktanowej każdego poproduktu j w benzynie i musi być większa lub równa liczbie oktanowej danej benzyny pomnożonej przez sumę ilości każdego poproduktu j w tej benzynie
+	o_technologia{i in Benzyny}: sum{j in podprodukty}oktany_podproduktow[j]*ilosc_podproduktow[i,j]>= 
+									liczba_oktanowa[i]*sum{j in podprodukty} ilosc_podproduktow[i,j];
+	
+	# Krakowania - dwukrotność ilości poproduktu ON98 w każdej benzynie nie przekracza limitu krakowania
+	o_krakowania:2*sum{i in Benzyny}ilosc_podproduktow[i,"ON98"]<=limit_krakowania;
+	
+	# Destylacji - pięciokrotność ilości poproduktu ON82 oraz dwukrotność ilości poproduktu ON98 w każdej benzynie nie przekracza podaży benzyny
+	o_destylacja:5*(sum{i in Benzyny}ilosc_podproduktow[i,"ON82"]+2*sum{i in Benzyny}ilosc_podproduktow[i,"ON98"])<= podaz_benzyny;
 
 data;
 set podprodukty:= ON82 ON98;
