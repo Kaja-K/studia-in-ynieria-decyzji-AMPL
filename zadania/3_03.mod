@@ -1,43 +1,48 @@
 option solver cplex;
-option cplex_options 'sensitivity';  # Opcje CPLEX
 
 reset;
 
 # Parametry
-param m;  # Liczba strategii dla gracza 1
-param n;  # Liczba strategii dla gracza 2
-param A;
+set m;  		# Liczba strategii dla gracza 1
+set n;  		# Liczba strategii dla gracza 2
+param A{m,n}; 	# Macierz gry
 
 # Zmienne decyzyjne
-var p{1..m} >= 0;  # Strategie mieszane gracza 1
-var t;             # Zmienna celu - wypłata
+var p{m} >= 0, <=1;  # Strategie mieszane gracza 1
+var t;             	 # Zmienna celu - wypłata
 
 # Funkcja celu
-maximize payoff: t;  # Maksymalizacja wypłaty
+maximize wartosc_gry: t;  # Maksymalizacja wypłaty
 
 # Ograniczenia
-q{j in 1..n}: t <= sum{i in 1..m} p[i] * A[i,j];  # Ograniczenie dla gracza 2
-c1: sum{i in 1..m} p[i] = 1;                      # Suma prawdopodobieństw strategii gracza 1 równa się 1
+gracz2{j in n}: t <= sum{i in m} p[i] * A[i,j];  # Ograniczenie dla gracza 2
+prob: sum{i in m} p[i] = 1;                		 # Suma prawdopodobieństw strategii gracza 1 równa się 1
 
-# Dostarczenie danych
+# Dane
 data;
+set m := "Kamien", "Papier", "Nozyce";
+set n := "Kamien", "Papier", "Nozyce";
+param A: "Kamien" "Papier" "Nozyce" := "Kamien" 0 -1 1 "Papier" 1 0 -1 "Nozyce" -1 1 0;
 
-param m := 3;  # Liczba strategii dla gracza 1 (kamień, papier, nożyce)
-param n := 3;  # Liczba strategii dla gracza 2 (kamień, papier, nożyce)
-param A : 1 2 3 := 1 0 -1 1 2 1 0 -1 s3 -1 1 0;
-
-# Rozwiązanie modelu i wyświetlenie wyników
 solve;
 
-printf "Wartość gry (wypłata): %f\n", payoff;
+printf "Wartość gry (wypłata): %f\n", wartosc_gry;
+
 printf "Strategie mieszane gracza 1 (p):\n";
-for {i in 1..m} {
-    printf "Strategia %d: %f\n", i, p[i];
-}
+for {i in m} {printf "Strategia %d: %f\n", i, p[i];}
 
 printf "Strategie mieszane gracza 2 (q - optymalne rozwiązanie dualne):\n";
-for {j in 1..n} {
-    printf "Strategia %d: %f\n", j, q[j];
-}
+for {j in n} {printf "Strategia %d: %f\n", j, p[j];}
+
+# Wynik: 
+# Wartość gry (wypłata): 0.000000
+# Strategie mieszane gracza 1 (p):
+# Strategia 0: 0.333333
+# Strategia 0: 0.333333
+# Strategia 0: 0.333333
+# Strategie mieszane gracza 2 (q - optymalne rozwiązanie dualne):
+# Strategia 0: 0.333333
+# Strategia 0: 0.333333
+# Strategia 0: 0.333333
 
 end;

@@ -1,24 +1,40 @@
 option solver cplex;
 reset;
 
-# Model dla gry z kartami
-var A1 binary; # Gracz 1 wybiera czarny As
-var R1 binary; # Gracz 1 wybiera czerwoną ósemkę
-var A2 binary; # Gracz 2 wybiera czerwoną dwójkę
-var R2 binary; # Gracz 2 wybiera czarną siódemkę
+# Parametry
+set m; 			# Liczba strategii dla gracza 1
+set n; 			# Liczba strategii dla gracza 2
+param A{m,n}; 	# Macierz gry
+
+# Zmienne decyzyjne
+var p{m} >= 0, <=1; 	# Strategie mieszane gracza 1
+var t;               	# Zmienna celu - wypłata
 
 # Funkcja celu
-maximize Wynik_Gracza_1: 1*A1 + 8*R1 - 2*A2 - 7*R2;
+maximize wartosc_gry: t; # Maksymalizacja wypłaty
 
 # Ograniczenia
-subject to Wybory_Graczy_1: A1 + R1 = 1;
-subject to Wybory_Graczy_2: A2 + R2 = 1;
+gracz2{j in n}: t <= sum{i in m} p[i] * A[i,j];  # Ograniczenie dla gracza 2
+prob: sum{i in m} p[i] = 1;                      # Suma prawdopodobieństw strategii gracza 1 równa się 1
 
-# Rozwiązanie
+# Dane
+data;
+set m := "As", "Osemka";
+set n := "Dwojka", "Siodemka";
+param A : "As" "Osemka" "Dwojka" "Siodemka" := 
+    "As" "As" 1 -1,
+    "Osemka" "As" -1 1,
+    "As" "Dwojka" 1 -1,
+    "Osemka" "Dwojka" 1 -1;
+
 solve;
 
-# Wyświetlanie wyników
-printf "Wynik gry dla gracza 1: %f\n", Wynik_Gracza_1.sol;
-printf "Optymalne strategie dla gracza 1:\n";
-printf "Czarny As: %f, Czerwoną ósemkę: %f\n", A1.sol, R1.sol;
-printf "Czerwoną dwójkę: %f, Czarną siódemkę: %f\n", A2.sol, R2.sol;
+printf "Wartość gry (wypłata): %f\n", wartosc_gry;
+
+printf "Strategie mieszane gracza 1 (p):\n";
+for {i in m} {printf "Strategia %s: %f\n", i, p[i];}
+
+printf "Strategie mieszane gracza 2 (q - optymalne rozwiązanie dualne):\n";
+for {j in n} {printf "Strategia %s: %f\n", j, p[j];}
+
+end;
