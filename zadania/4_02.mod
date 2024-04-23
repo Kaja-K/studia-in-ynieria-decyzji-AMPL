@@ -11,17 +11,17 @@ param pojemnosc_samolotow{Samoloty};  	# Pojemność pasażerska dla każdego ty
 param limit_lotow{Samoloty, Trasy};  	# Limit lotów dla każdego typu samolotu na danej trasie
 param liczba_pasazerow{Trasy};  		# Liczba pasażerów oczekujących na każdej trasie
 
-# Zmienne decyzyjne
-var x{Samoloty, Trasy} >= 0, integer;  # Liczba lotów danym samolotem na danej trasie
+# Zmienne decyzyjne - Liczba lotów danym samolotem na danej trasie
+var x{Samoloty, Trasy} >= 0, integer;
 
-# Funkcja celu
-minimize Koszt: 
-    sum{i in Samoloty, j in Trasy} (x[i,j] * koszt_przelotu[i,j])  # Koszt przelotów
-  + sum{j in Trasy} (liczba_pasazerow[j] - sum{i in Samoloty} x[i,j] * pojemnosc_samolotow[i]) * koszt_utraconego_pasazera[j];  # Koszt utraconych pasażerów
+# Funkcja celu - Koszt przelotu + Koszt utraconych pasażerów
+minimize Koszt:
+    sum{i in Samoloty, j in Trasy} (x[i,j] * koszt_przelotu[i,j])
+  + sum{j in Trasy} (liczba_pasazerow[j] - sum{i in Samoloty} x[i,j] * pojemnosc_samolotow[i]) * koszt_utraconego_pasazera[j]; 
 
 # Ograniczenia
-Limit_lotow{i in Samoloty, j in Trasy}:x[i,j] <= limit_lotow[i,j];# Limit lotów dla każdego typu samolotu na danej trasie
-Limit_samolotow{i in Samoloty}:sum{j in Trasy} x[i,j] <= liczba_samolotow[i];# Limit dostępnych samolotów dla każdego typu
+o_Limit_lotow{i in Samoloty, j in Trasy}:x[i,j] <= limit_lotow[i,j];		   # Limit lotów dla każdego typu samolotu na danej trasie
+o_Limit_samolotow{i in Samoloty}:sum{j in Trasy} x[i,j] <= liczba_samolotow[i];# Limit dostępnych samolotów dla każdego typu
 
 # Dane
 data;
@@ -32,7 +32,7 @@ param limit_lotow: 'Trasa-1' 'Trasa-2' 'Trasa-3' 'Trasa-4' := 'Typ-1' 3 2 2 1 'T
 
 solve;  
 display x, Koszt;  
-# Wynik:
+# Wynik: Koszt = 249800
 # Typ-1 Trasa-1   0
 # Typ-1 Trasa-2   2
 # Typ-1 Trasa-3   2
@@ -45,6 +45,5 @@ display x, Koszt;
 # Typ-3 Trasa-2   3
 # Typ-3 Trasa-3   0
 # Typ-3 Trasa-4   2
-# Koszt = 249800
 
 end;
