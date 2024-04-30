@@ -13,7 +13,7 @@ var czy_posterunek_w_dzielnicy{i in 1..liczba_posterunkow} binary;
 # Funkcja celu - Minimalizacja liczby posterunków
 minimize posterunki: sum{i in 1..liczba_posterunkow} czy_posterunek_w_dzielnicy[i];  
 
-# Ograniczenie - Każda dzielnica musi mieć przynajmniej jeden posterunek
+# Ograniczenie
 o_rozmieszczenie{i in 1..liczba_posterunkow}: sum{j in 1..liczba_dzielnic: macierz_czasow[i,j] <= czas_podrozy} czy_posterunek_w_dzielnicy[j] * macierz_czasow[i,j] >= 1;  
 
 # Dane  

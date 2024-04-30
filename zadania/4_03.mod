@@ -3,7 +3,7 @@ reset;
 
 # Parametry
 param liczba_przedmiotow;  												# Liczba przedmiotów
-param maksymalna_waga_plecaka;  										# Maksymalna waga plecaka
+param maksymalna_waga_paczki;  											# Maksymalna waga paczki
 param wagi_przedmiotow{i in 1..liczba_przedmiotow};  					# Wagi przedmiotów
 param wartosci_przedmiotow{i in 1..liczba_przedmiotow}; 				# Wartości przedmiotów
 set para_L1 within 1..liczba_przedmiotow cross 1..liczba_przedmiotow;  	# Zbiór par przedmiotów z L1
@@ -17,7 +17,7 @@ var czy_zabrac_przedmiot{i in 1..liczba_przedmiotow} binary;
 maximize suma_wartosci: sum{i in 1..liczba_przedmiotow} czy_zabrac_przedmiot[i] * wartosci_przedmiotow[i];  
 
 # Ograniczenia 
-o_wagi: sum{i in 1..liczba_przedmiotow} czy_zabrac_przedmiot[i] * wagi_przedmiotow[i] <= maksymalna_waga_plecaka;   # Ograniczenie wagi plecaka
+o_wagi: sum{i in 1..liczba_przedmiotow} czy_zabrac_przedmiot[i] * wagi_przedmiotow[i] <= maksymalna_waga_paczki;   # Ograniczenie wagi plecaka
 o_L1{(i,j) in para_L1}: czy_zabrac_przedmiot[i] + czy_zabrac_przedmiot[j] <= 1;  									# Ograniczenie dla par przedmiotów z L1
 o_L2{(i,j) in para_L2}: czy_zabrac_przedmiot[i] + czy_zabrac_przedmiot[j] >= 1;  									# Ograniczenie dla par przedmiotów z L2
 o_L3{(i,j) in para_L3}: czy_zabrac_przedmiot[i] <= czy_zabrac_przedmiot[j];  	 									# Ograniczenie dla par przedmiotów z L3
@@ -25,7 +25,7 @@ o_L3{(i,j) in para_L3}: czy_zabrac_przedmiot[i] <= czy_zabrac_przedmiot[j];  	 	
 # Dane 
 data;
 param liczba_przedmiotow:=20;
-param maksymalna_waga_plecaka:=45;
+param maksymalna_waga_paczki:=45;
 param wagi_przedmiotow:= 1 7 2 4 3 8 4 1 5 9 6 7 7 8 8 1 9 10 10 4 11 5 12 5 13 5 14 2 15 8 16 7 17 9 18 2 19 6 20 4;
 param wartosci_przedmiotow:= 1 7 2 2 3 10 4 2 5 5 6 4 7 5 8 3 9 9 10 6 11 7 12 7 13 3 14 1 15 10 16 9 17 8 18 6 19 1 20 8;
 set para_L1:= 2 5 3 4 7 11 10 11;
