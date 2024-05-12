@@ -2,44 +2,42 @@ option solver cplex;
 reset;
 
 # Parametry
-set Czynnosci; 										# Zbiór wszystkich czynności   N
-param CzasTrwania{Czynnosci}; 						# Czas trwania każdej czynności   t{N};
-param KosztSkrócenia{Czynnosci} >= 0; 				# Koszt skrócenia każdej czynności   c{N};
-param CzasMin{Czynnosci} >= 0; 						# Minimalny czas trwania każdej czynności  tmin{N}
-param MaxCzas; 										# Zadany maksymalny czas trwania projektu  T;
-set precedencja within Czynnosci cross Czynnosci; 	# Relacja precedencji
+set Zadania;									# Zbiór zadań
+set Poprzedniki within Zadania cross Zadania;	# Zbiór poprzedników zadań
+param CzasWykonania{Zadania};        			# Czas trwania każdego zadania
+param MinimalnyCzas{Zadania};        			# Minimalny czas wykonania każdego zadania
+param KosztSkrócenia{Zadania};       			# Koszt skrócenia każdego zadania
+param MaksymalnyCzas;                			# Maksymalny czas trwania projektu
 
-# Zmienna decyzyjna - Liczba jednostek czasu, o które należy skrócić czas trwania każdej czynności
-var SkrtCzasu{Czynnosci} >= 0;
-var SkrtIlości{Czynnosci} >= 0;
+# Zmienne decyzyjne
+var TerminZakonczenia{Zadania} >= 0;    # Termin zakończenia każdego zadania
+var ZapasCzasu{Zadania} >= 0;           # Zapas czasu dla każdego zadania
 
-# Funkcja celu - Minimalizacja kosztu całkowitego skrócenia projektu
-minimize KosztSkróceniaRazem: sum {i in Czynnosci} KosztSkrócenia[i] * SkrtCzasu[i];
+# Funkcja celu - Minimalizacja całkowitego kosztu skrócenia projektu
+minimize KosztSkróceniaProjektu: sum{i in Zadania} KosztSkrócenia[i] * ZapasCzasu[i];
 
-#Ogranioczenia
-c1{(i,j) in precedencja}: SkrtIlości[j]>=SkrtIlości[i]+CzasTrwania[i]-SkrtCzasu[i];
-c2{i in Czynnosci}: SkrtIlości[i]+KosztSkrócenia[i]-SkrtCzasu[i]<=MaxCzas;
-c3{i in Czynnosci}: KosztSkrócenia[i]-SkrtCzasu[i]>=CzasMin[i];
+# Ograniczenia 
+o_Poprzednika{(i,j) in Poprzedniki}: TerminZakonczenia[j] >= TerminZakonczenia[i] + CzasWykonania[i] - ZapasCzasu[i];  	# Ograniczenie czasowe dla poprzedników
+o_MaksymalnyTermin{i in Zadania}: TerminZakonczenia[i] + CzasWykonania[i] - ZapasCzasu[i] <= MaksymalnyCzas; 			# Maksymalny termin zakończenia projektu
+o_MinimalnyCzasWykonania{i in Zadania}: CzasWykonania[i] - ZapasCzasu[i] >= MinimalnyCzas[i];							# Minimalny czas trwania każdego zadania
 
 # Dane
 data;
-set Czynnosci := A B C D E F G;
-param CzasTrwania := A 2 B 4 C 5 D 6 E 3 F 4 G 4;
-param KosztSkrócenia := A 1 B 2 C 1 D 2 E 5 F 4 G 1;
-param CzasMin := A 1 B 2 C 3 D 1 E 1 F 2 G 3;
-param MaxCzas := 50;
-set precedencja :=(A, B) (A, C) (B, D) (C, E) (C, F) (D, F) (E, G) (F, G);
+set Zadania := 'A' 'B' 'C' 'D' 'E' 'F' 'G';
+set Poprzedniki := ('B', 'D') ('C', 'D') ('E', 'A') ('E', 'F') ('D', 'F') ('C', 'G');
+param: Zadania: CzasWykonania, KosztSkrócenia, MinimalnyCzas :='A' 2 1 1 'B' 4 2 2 'C' 5 1 3 'D' 6 2 1 'E' 3 5 1 'F' 4 4 2 'G' 4 1 3;
+param MaksymalnyCzas := 7;
 
 solve;
-display KosztSkróceniaRazem, SkrtCzasu, SkrtIlości;
-# Wynik:  KosztSkróceniaRazem = 0
-# SkrtCzasu SkrtIlości 
-# A      0          0
-# B      0          0
-# C      0          0
-# D      0          0
-# E      0          0
-# F      0          0
-# G      0          0
+display KosztSkróceniaProjektu, ZapasCzasu;
+# Wynik:KosztSkróceniaProjektu = 18
+# ZapasCzasu 
+# A  0
+# B  1
+# C  2
+# D  5
+# E  0
+# F  1
+# G  0
 
 end;
