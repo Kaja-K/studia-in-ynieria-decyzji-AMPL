@@ -1,58 +1,55 @@
 option solver cplex;
 reset;
 
-# Definicja zestawu danych
-param miasta > 0, integer; 							# Liczba miast, z których pochodzą odpady
-param spalarnie > 0, integer; 						# Liczba spalarni, do których odpady są transportowane
-param wysypiska > 0, integer; 						# Liczba wysypisk, do których jest transportowany popioł
-param m_s{i in 1..miasta, j in 1..spalarnie}; 		# Koszt transportu odpadów z miasta i do spalarni (w tony)
-param s_w{j in 1..spalarnie, k in 1..wysypiska}; 	# Koszt transportu popiołu ze spalarni do wysypiska (w tony)
-param spalanie{j in 1..spalarnie};					# Koszt spalania odpadów w każdej z spalarni (w tony)
-param popiol{j in 1..spalarnie}; 					# Ilość popiołu wytwarzanego przez każdą z spalarni (w tony)
-param l_spalania{j in 1..spalarnie}; 				# Limit spalania odpadów w każdej z spalarni (w tony)
-param l_wysypisk{k in 1..wysypiska}; 				# Limit ilości odpadów, które mogą być składowane w każdym z wysypisk (w tony)
-param odpady{1..miasta}; 							# Ilość odpadów w każdym z miast (w tony)
-param transport; 									# Koszt transportu jednej tony odpadów lub popiołu
+# Parametry
+param m > 0, integer; 							# Liczba miast produkujących odpady
+param s > 0, integer; 							# Liczba spalarni odpadów
+param w > 0, integer; 							# Liczba wysypisk dla popiołu
+param koszt_transportu_ms{i in 1..m, j in 1..s};# Koszt transportu odpadów z miasta i do spalarni j (w tonach)
+param koszt_transportu_sw{j in 1..s, k in 1..w};# Koszt transportu popiołu ze spalarni j do wysypiska k (w tonach)
+param koszt_spalania{j in 1..s}; 				# Koszt spalania jednej tony odpadów w każdej spalarni (w tonach)
+param ilosc_popiolu{j in 1..s}; 				# Ilość popiołu wytworzonego przez każdą spalarnię (w tonach)
+param limit_spalania{j in 1..s}; 				# Limit spalania odpadów w każdej spalarni (w tonach)
+param limit_wysypiska{k in 1..w}; 				# Limit ilości popiołu składowanego w każdym wysypisku (w tonach)
+param ilosc_odpadow{1..m}; 						# Ilość odpadów wytworzonych w każdym z miast (w tonach)
+param koszt_transportu; 						# Koszt transportu jednej tony odpadów lub popiołu ($/tona)
 
 # Zmienne decyzyjne
-var odpady_m_s{i in 1..miasta, j in 1..spalarnie} >= 0; 	# Ilość ton odpadów wysyłanych z miasta i do spalarni j
-var popiol_s_w{j in 1..spalarnie, k in 1..wysypiska} >= 0; 	# Ilość ton popiołu transportowanych ze spalarni j do wysypiska k
+var ilosc_odpadow_ms{i in 1..m, j in 1..s} >= 0;# Ilość ton odpadów transportowanych z miasta i do spalarni j
+var ilosc_popiolu_sw{j in 1..s, k in 1..w} >= 0;# Ilość ton popiołu transportowanych ze spalarni j do wysypiska k
 
 # Funkcja celu - minimalizacja kosztu transportu
-
-minimize koszt: 
-sum{i in 1..miasta, j in 1..spalarnie} m_s[i,j] * transport * odpady_m_s[i,j] +  	# Koszt transportu odpadów z miast do spalarni
-sum{i in 1..miasta, j in 1..spalarnie} spalanie[j] * odpady_m_s[i,j] +             	# Koszt spalania odpadów w poszczególnych spalarniach
-sum{j in 1..spalarnie, k in 1..wysypiska} s_w[j,k] * transport * popiol_s_w[j,k];  	# Koszt transportu popiołu ze spalarni do wysypiska
+minimize koszt_transportu_calkowity: 
+		sum{i in 1..m, j in 1..s} koszt_transportu_ms[i,j] * koszt_transportu * ilosc_odpadow_ms[i,j] +  	# Koszt transportu odpadów z miast do spalarni
+		sum{i in 1..m, j in 1..s} koszt_spalania[j] * ilosc_odpadow_ms[i,j] +             					# Koszt spalania odpadów w poszczególnych spalarniach
+		sum{j in 1..s, k in 1..w} koszt_transportu_sw[j,k] * koszt_transportu * ilosc_popiolu_sw[j,k];  	# Koszt transportu popiołu ze spalarni do wysypiska
 
 # Ograniczenia
-subject to
-o_l_spalania{j in 1..spalarnie}: sum{i in 1..miasta} odpady_m_s[i,j] <= l_spalania[j];           				 	# Limit spalania w poszczególnych spalarniach
-o_limit_wysypiska{k in 1..wysypiska}: sum{j in 1..spalarnie} popiol_s_w[j,k] <= l_wysypisk[k];   					# Limit składowania popiołu w wysypisku
-o_p{j in 1..spalarnie}: sum{k in 1..wysypiska} popiol_s_w[j,k] >= sum{i in 1..miasta} popiol[j] * odpady_m_s[i,j];  # Wywóz popiołu z spalarni do wysypiska
-o_o{i in 1..miasta}: sum{j in 1..spalarnie} odpady_m_s[i,j] >= odpady[i];           								# Wywóz odpadów z miast
+o_limit_spalania{j in 1..s}: sum{i in 1..m} ilosc_odpadow_ms[i,j] <= limit_spalania[j];           				 		# Limit spalania w poszczególnych spalarniach
+o_limit_wysypiska{k in 1..w}: sum{j in 1..s} ilosc_popiolu_sw[j,k] <= limit_wysypiska[k];   							# Limit składowania popiołu w wysypisku
+o_popiol {j in 1..s}: sum{k in 1..w} ilosc_popiolu_sw[j,k] >= sum{i in 1..m} ilosc_popiolu[j] * ilosc_odpadow_ms[i,j]; 	# Wywóz popiołu z spalarni do wysypiska
+o_odpady_miasta{i in 1..m}: sum{j in 1..s} ilosc_odpadow_ms[i,j] >= ilosc_odpadow[i];           						# Wywóz odpadów z miast
 
-# Dane
 data;
-param miasta:=2;
-param spalarnie:=2; 
-param wysypiska:=2;
-param m_s:= 1 1 30 1 2 5 2 1 36 2 2 42;
-param s_w:= 1 1 5 1 2 8 2 1 9 2 2 6 ;
-param spalanie:= 1 40 2 30;
-param popiol:= 1 0.3 2 0.3;
-param l_spalania:= 1 1500 2 1500;
-param l_wysypisk:= 1 500 2 500;
-param odpady:= 1 1500 2 1400;
-param transport:=3;
+param m := 2;
+param s := 2; 
+param w := 2;
+param koszt_transportu_ms:= 1 1 30 1 2 5 2 1 36 2 2 42;
+param koszt_transportu_sw:= 1 1 5 1 2 8 2 1 9 2 2 6;
+param koszt_spalania:= 1 40 2 30;
+param ilosc_popiolu:= 1 0.3 2 0.3;
+param limit_spalania:= 1 1500 2 1500;
+param limit_wysypiska:= 1 500 2 500;
+param ilosc_odpadow:= 1 1500 2 1400;
+param koszt_transportu:= 3;
 
 solve;
-display odpady_m_s, popiol_s_w, koszt;
-# Wynik: 	
-# 1 1        0       420 - Oznacza, że z miasta 1 do spalarni 1 nie jest transportowany żaden ton odpadów, a koszt transportu odpadów z miasta 1 do spalarni 2 wynosi 420.
-# 1 2     1500         0 - Oznacza, że z miasta 1 do spalarni 2 jest transportowanych 1500 ton odpadów, a koszt transportu popiołu ze spalarni 1 do wysypiska 2 wynosi 0.
-# 2 1     1400         0 - Oznacza, że z miasta 2 do spalarni 1 jest transportowanych 1400 ton odpadów, a koszt transportu popiołu ze spalarni 2 do wysypiska 1 wynosi 0.
-# 2 2        0       450 - Oznacza, że z miasta 2 do spalarni 2 nie jest transportowany żaden ton odpadów, a koszt transportu popiołu ze spalarni 2 do wysypiska 2 wynosi 450.
-#koszt = 289100
+display koszt_transportu_calkowity, ilosc_odpadow_ms, ilosc_popiolu_sw;
+# Wynik: koszt_transportu_calkowity = 289100
+#    ilosc_odpadow_ms ilosc_popiolu_sw 
+# 1 1                  0                             420
+# 1 2               1500                               0
+# 2 1               1400                               0
+# 2 2                  0                             450
 
 end;

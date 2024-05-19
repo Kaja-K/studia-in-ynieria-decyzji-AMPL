@@ -2,42 +2,41 @@ option solver cplex;
 reset;
 
 # Parametry
-set Zadania;									# Zbiór zadań
-set Poprzedniki within Zadania cross Zadania;	# Zbiór poprzedników zadań
-param CzasWykonania{Zadania};        			# Czas trwania każdego zadania
-param MinimalnyCzas{Zadania};        			# Minimalny czas wykonania każdego zadania
-param KosztSkrócenia{Zadania};       			# Koszt skrócenia każdego zadania
-param MaksymalnyCzas;                			# Maksymalny czas trwania projektu
+set Z;								# Zbiór zadań
+set Poprzedniki within Z cross Z;	# Zbiór poprzedników zadań
+param czas_wykonania{Z};        	# Czas trwania każdego zadania
+param minimalny_czas{Z};        	# Minimalny czas wykonania każdego zadania
+param koszt_skrocenia{Z};       	# Koszt skrócenia każdego zadania
+param maksymalny_czas;               # Maksymalny czas trwania projektu
 
 # Zmienne decyzyjne
-var TerminZakonczenia{Zadania} >= 0;    # Termin zakończenia każdego zadania
-var ZapasCzasu{Zadania} >= 0;           # Zapas czasu dla każdego zadania
+var termin_zakonczenia{Z} >= 0;    # Termin zakończenia każdego zadania
+var zapas_czasu{Z} >= 0;           # Zapas czasu dla każdego zadania
 
 # Funkcja celu - Minimalizacja całkowitego kosztu skrócenia projektu
-minimize KosztSkróceniaProjektu: sum{i in Zadania} KosztSkrócenia[i] * ZapasCzasu[i];
+minimize koszt_skrocenia_projektu: sum{i in Z} koszt_skrocenia[i] * zapas_czasu[i];
 
 # Ograniczenia 
-o_Poprzednika{(i,j) in Poprzedniki}: TerminZakonczenia[j] >= TerminZakonczenia[i] + CzasWykonania[i] - ZapasCzasu[i];  	# Ograniczenie czasowe dla poprzedników
-o_MaksymalnyTermin{i in Zadania}: TerminZakonczenia[i] + CzasWykonania[i] - ZapasCzasu[i] <= MaksymalnyCzas; 			# Maksymalny termin zakończenia projektu
-o_MinimalnyCzasWykonania{i in Zadania}: CzasWykonania[i] - ZapasCzasu[i] >= MinimalnyCzas[i];							# Minimalny czas trwania każdego zadania
+o_poprzednika{(i,j) in Poprzedniki}: termin_zakonczenia[j] >= termin_zakonczenia[i] + czas_wykonania[i] - zapas_czasu[i]; # Czas dla poprzedników
+o_maksymalny_termin{i in Z}: termin_zakonczenia[i] + czas_wykonania[i] - zapas_czasu[i] <= maksymalny_czas; 			  # Maksymalny termin zakończenia projektu
+o_minimalny_czas_wykonania{i in Z}: czas_wykonania[i] - zapas_czasu[i] >= minimalny_czas[i];							  # Minimalny czas trwania każdego zadania
 
-# Dane
 data;
-set Zadania := 'A' 'B' 'C' 'D' 'E' 'F' 'G';
+set Z := 'A' 'B' 'C' 'D' 'E' 'F' 'G';
 set Poprzedniki := ('B', 'D') ('C', 'D') ('E', 'A') ('E', 'F') ('D', 'F') ('C', 'G');
-param: Zadania: CzasWykonania, KosztSkrócenia, MinimalnyCzas :='A' 2 1 1 'B' 4 2 2 'C' 5 1 3 'D' 6 2 1 'E' 3 5 1 'F' 4 4 2 'G' 4 1 3;
-param MaksymalnyCzas := 7;
+param: Z: czas_wykonania, koszt_skrocenia, minimalny_czas :='A' 2 1 1 'B' 4 2 2 'C' 5 1 3 'D' 6 2 1 'E' 3 5 1 'F' 4 4 2 'G' 4 1 3;
+param maksymalny_czas := 7;
 
 solve;
-display KosztSkróceniaProjektu, ZapasCzasu;
-# Wynik:KosztSkróceniaProjektu = 18
-# ZapasCzasu 
-# A  0
-# B  1
-# C  2
-# D  5
-# E  0
-# F  1
-# G  0
+display koszt_skrocenia_projektu, zapas_czasu, termin_zakonczenia;
+# Wynik:koszt_skrocenia_projektu = 18
+# 	zapas_czasu termin_zakonczenia 
+# A      0              5
+# B      1              0
+# C      2              0
+# D      5              3
+# E      0              0
+# F      1              4
+# G      0              3
 
 end;

@@ -1,52 +1,49 @@
 option solver cplex;
 reset;
 
-# Deklaracja parametrów
-param liczba_miesiecy > 0, integer;  	# Liczba miesięcy
-param popyt{1..liczba_miesiecy};     	# Popyt na kukurydzę w każdym miesiącu
-param gotowka_start; 					# Początkowa ilość gotówki
-param k_start;  						# Początkowa ilość kukurydzy w magazynie
-param cena{1..liczba_miesiecy};      	# Cena kukurydzy w każdym miesiącu
-param koszt{1..liczba_miesiecy};     	# Koszt zakupu kukurydzy w każdym miesiącu
-param magazyn;                        	# Pojemność magazynu
+# Parametry
+param n > 0, integer;  		# Liczba miesięcy
+param popyt{1..n};        	# Popyt na kukurydzę w każdym miesiącu
+param gotowka_poczatkowa;	# Początkowa ilość gotówki
+param kukurydza_poczatkowa; # Początkowa ilość kukurydzy w magazynie
+param cena_kupna{1..n};   	# Cena kupna kukurydzy w każdym miesiącu
+param koszt_kupna{1..n};  	# Koszt zakupu kukurydzy w każdym miesiącu
+param pojemnosc_magazynu;   # Pojemność magazynu
 
 # Zmienne decyzyjne
-var gotowka{i in 1..liczba_miesiecy} >= 0;     # Ilość gotówki na koniec każdego miesiąca
-var k_kupiona{i in 1..liczba_miesiecy} >= 0;   # Ilość kupionej kukurydzy w każdym miesiącu
-var k_sprzedana{i in 1..liczba_miesiecy} >= 0; # Ilość sprzedanej kukurydzy w każdym miesiącu
-var k_magazyn{i in 1..liczba_miesiecy} >= 0;   # Ilość kukurydzy w magazynie na koniec każdego miesiąca
+var gotowka{1..n} >= 0;       			# Ilość gotówki na koniec każdego miesiąca
+var kupiona_kukurydza{1..n} >= 0;   	# Ilość kupionej kukurydzy w każdym miesiącu
+var sprzedana_kukurydza{1..n} >= 0; 	# Ilość sprzedanej kukurydzy w każdym miesiącu
+var ilosc_kukurydzy_magazyn{1..n} >= 0; # Ilość kukurydzy w magazynie na koniec każdego miesiąca
 
-# Funkcja celu - maksymalizacja zysku na koniec okresu
-maximize zysk: gotowka[liczba_miesiecy];
+# Funkcja celu - Maksymalizacja gotówki na koniec okresu
+maximize zysk: gotowka[n];
 
 # Ograniczenia 
-subject to
-o_start: gotowka[1] = gotowka_start - k_kupiona[1]*koszt[1] + k_sprzedana[1]*cena[1];  							# Stan konta na początku
-o_miesiac{i in 2..liczba_miesiecy}: gotowka[i] = gotowka[i-1] - k_kupiona[i]*koszt[i] + k_sprzedana[i]*cena[i]; # Stan konta w każdym miesiącu
-o_magazyn: k_magazyn[1] = k_start + k_kupiona[1] - k_sprzedana[1];  											# Stan magazynu na początku
-o_magazyn_mies{i in 2..liczba_miesiecy}: k_magazyn[i] = k_magazyn[i-1] + k_kupiona[i] - k_sprzedana[i];			# Stan magazynu w każdym miesiącu
-o_pojemność: k_start + k_kupiona[1] - k_sprzedana[1] <= magazyn;  												# Pojemność magazynu na początku
-o_pojemność_mies{i in 2..liczba_miesiecy}: k_magazyn[i-1] + k_kupiona[i] - k_sprzedana[i] <= magazyn;  			# Pojemność magazynu w każdym miesiącu
-o_sprzedaż{i in 1..liczba_miesiecy}: k_sprzedana[i] <= popyt[i];  												# Sprzedaż do popytu
+o_gotowka_poczatkowa: gotowka[1] = gotowka_poczatkowa - kupiona_kukurydza[1]*koszt_kupna[1] + sprzedana_kukurydza[1]*cena_kupna[1];  		# Stan konta na początku
+o_gotowka{i in 2..n}: gotowka[i] = gotowka[i-1] - kupiona_kukurydza[i]*koszt_kupna[i] + sprzedana_kukurydza[i]*cena_kupna[i]; 				# Stan konta w każdym miesiącu
+o_kukurydza_poczatkowa: ilosc_kukurydzy_magazyn[1] = kukurydza_poczatkowa + kupiona_kukurydza[1] - sprzedana_kukurydza[1];  				# Stan magazynu na początku
+o_kukurydza_magazyn{i in 2..n}: ilosc_kukurydzy_magazyn[i] = ilosc_kukurydzy_magazyn[i-1] + kupiona_kukurydza[i] - sprzedana_kukurydza[i];	# Stan magazynu w każdym miesiącu
+o_pojemnosc_magazynu: kukurydza_poczatkowa + kupiona_kukurydza[1] - sprzedana_kukurydza[1] <= pojemnosc_magazynu;  							# Pojemność magazynu na początku
+o_pojemnosc_magazynu_mies{i in 2..n}: ilosc_kukurydzy_magazyn[i-1] + kupiona_kukurydza[i] - sprzedana_kukurydza[i] <= pojemnosc_magazynu;  	# Pojemność magazynu w każdym miesiącu
+o_sprzedaz_kukurydzy{i in 1..n}: sprzedana_kukurydza[i] <= popyt[i];  																		# Sprzedaż do popytu
 
-# Dane
 data;
-param liczba_miesiecy:=4;
+param n:=4;
 param popyt:= 1 50 2 75 3 100 4 80;
-param gotowka_start:= 2000;
-param k_start:= 100;
-param koszt:= 1 200 2 100 3 200 4 300; 
-param cena:= 1 320 2 300 3 250 4 400;
-param magazyn:= 200;
+param gotowka_poczatkowa:= 2000;
+param kukurydza_poczatkowa:= 100;
+param koszt_kupna:= 1 200 2 100 3 200 4 300; 
+param cena_kupna:= 1 320 2 300 3 250 4 400;
+param pojemnosc_magazynu:= 200;
 
 solve;
-display gotowka, k_kupiona, k_sprzedana, k_magazyn, zysk;
-# Wynik: 
-#	miesiąc	gotowka k_kupiona k_sprzedana k_magazyn
-#	1   	18000       0         50         50
-#	2   	20000     205         75        180
-#	3   	45000       0        100         80
-#	4   	77000       0         80          0
-# Zysk = 77000   --> tu Źle coś jest 
+display zysk, gotowka, kupiona_kukurydza, sprzedana_kukurydza, ilosc_kukurydzy_magazyn;
+# Wynik:zysk = 77000
+# gotowka kupiona_kukurydza sprzedana_kukurydza ilosc_kukurydzy_magazyn
+# 1   18000           0                 50                    50
+# 2   20000         205                 75                   180
+# 3   45000           0                100                    80
+# 4   77000           0                 80                     0
 
 end;

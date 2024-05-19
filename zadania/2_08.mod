@@ -2,51 +2,49 @@ option solver cplex;
 reset;
 
 # Deklaracja parametrów
-set Benzyny; 							# Zbior benzyn
-set podprodukty; 						# Zbior poproduktow
-param oktany_podproduktow{podprodukty};	# Liczba oktanowa dla poszczególnych poproduktów
-param cena{Benzyny}; 					# Cena benzyny
-param popyt{Benzyny};					# Popyt na benzynę
-param liczba_oktanowa{Benzyny}; 		# Liczba oktanowa benzyny
-param podaz_benzyny;					# Podaż benzyny
-param limit_krakowania;					# Limit krakowania
+set Benzyny; 								# Zbiór typów benzyn
+set Podprodukty; 							# Zbiór poproduktów
+param min_oktany_podproduktow{Podprodukty};	# Minimalne liczby oktanowe dla poszczególnych poproduktów
+param cena_benzyny{Benzyny}; 				# Cena jednostkowa benzyny
+param popyt_benzyny{Benzyny};				# Dzienny popyt na benzynę
+param min_oktany_benzyny{Benzyny}; 			# Minimalne liczby oktanowe dla poszczególnych benzyn
+param podaz_ropy;							# Dzienna podaż ropy
+param limit_krakowania;						# Limit przetwarzania w procesie krakowania
 
-# Zmienna decyzyjna - Ilość poproduktów j-tego w benzynie i-tej
-var ilosc_podproduktow{Benzyny,podprodukty} >=0;
+# Zmienna decyzyjna - Ilość podproduktów j-tego w benzynie i-tej
+var podprodukty_w_benzynie{Benzyny, Podprodukty} >= 0;
 
-# Funkcja celu - maksymalizacja całkowitego zysku
-maximize zysk: sum{i in Benzyny, j in podprodukty} cena[i]*ilosc_podproduktow[i,j];
+# Funkcja celu - Maksymalizacja całkowitego zysku
+maximize zysk: sum{i in Benzyny, j in Podprodukty} cena_benzyny[i] * podprodukty_w_benzynie[i, j];
 
 # Ograniczenia
 
-	# Sprzedaży benzyny - suma ilości każdego poproduktu j w benzynie i nie przekracza popytu na tę benzynę
-	o_sprzedaz{i in Benzyny}: sum{j in podprodukty} ilosc_podproduktow[i,j] <= popyt[i];
-	
-	# Technologiczne - suma iloczynów liczby oktanowej każdego poproduktu j w benzynie i musi być większa lub równa liczbie oktanowej danej benzyny pomnożonej przez sumę ilości każdego poproduktu j w tej benzynie
-	o_technologia{i in Benzyny}: sum{j in podprodukty}oktany_podproduktow[j]*ilosc_podproduktow[i,j]>= 
-									liczba_oktanowa[i]*sum{j in podprodukty} ilosc_podproduktow[i,j];
-	
-	# Krakowania - dwukrotność ilości poproduktu ON98 w każdej benzynie nie przekracza limitu krakowania
-	o_krakowania:2*sum{i in Benzyny}ilosc_podproduktow[i,"ON98"]<=limit_krakowania;
-	
-	# Destylacji - pięciokrotność ilości poproduktu ON82 oraz dwukrotność ilości poproduktu ON98 w każdej benzynie nie przekracza podaży benzyny
-	o_destylacja:5*(sum{i in Benzyny}ilosc_podproduktow[i,"ON82"]+2*sum{i in Benzyny}ilosc_podproduktow[i,"ON98"])<= podaz_benzyny;
+# Sprzedaży benzyny - suma ilości każdego podproduktu j w benzynie i nie przekracza popytu na tę benzynę
+o_sprzedaz{i in Benzyny}: sum{j in Podprodukty} podprodukty_w_benzynie[i, j] <= popyt_benzyny[i];	
+
+# Technologiczne - suma iloczynów liczby oktanowej każdego podproduktu j w benzynie i musi być większa lub równa liczbie oktanowej danej benzyny pomnożonej przez sumę ilości każdego podproduktu j w tej benzynie
+o_technologia{i in Benzyny}: sum{j in Podprodukty} min_oktany_podproduktow[j] * podprodukty_w_benzynie[i, j] >= min_oktany_benzyny[i] * sum{j in Podprodukty} podprodukty_w_benzynie[i, j];	
+
+# Krakowania - dwukrotność ilości podproduktu ON98 w każdej benzynie nie przekracza limitu krakowania
+o_krakowania: 2 * sum{i in Benzyny} podprodukty_w_benzynie[i, "ON98"] <= limit_krakowania;	
+
+# Destylacja - pięciokrotność ilości podproduktu ON82 oraz dwukrotność ilości podproduktu ON98 w każdej benzynie nie przekracza podaży benzyny
+o_destylacja: 5 * (sum{i in Benzyny} podprodukty_w_benzynie[i, "ON82"] + 2 * sum{i in Benzyny} podprodukty_w_benzynie[i, "ON98"]) <= podaz_ropy;
 
 data;
-set podprodukty:= ON82 ON98;
-param oktany_podproduktow:= ON82 82 ON98 98;
-param: Benzyny: 	cena		popyt		liczba_oktanowa:=
-		normalna	6.7			50000		87
-		premium		7.2			30000		89
-		super		8.1			40000		92;
-param podaz_benzyny:= 1500000;
-param limit_krakowania:= 200000;
+set Podprodukty := ON82 ON98;
+param min_oktany_podproduktow:= ON82 82 ON98 98;
+param podaz_ropy := 1500000;
+param limit_krakowania := 200000;
+param: Benzyny: 	cena_benzyny		popyt_benzyny		min_oktany_benzyny:=
+		normalna		6.7					50000					87
+		premium			7.2					30000					89
+		super			8.1					40000					92;
 
 solve;
-
-display zysk,ilosc_podproduktow;
+display zysk, podprodukty_w_benzynie;
 # Wynik: zysk = 875000
-#ilosc_podproduktow :=
+#ilosc_podproduktow 
 #	normalna ON82   34375
 #	normalna ON98   15625
 #	premium  ON82   16875
@@ -55,4 +53,3 @@ display zysk,ilosc_podproduktow;
 #	super    ON98   25000
 
 end;
-

@@ -2,34 +2,31 @@ option solver cplex;
 reset;
 
 # Parametry
-param m; 				# Liczba strategii dla gracza 1
-param n; 				# Liczba strategii dla gracza 2
-param A{1..m,1..n}; 	# Macierz gry
+param strategie_gracza1; 									# Liczba strategii dla gracza 1
+param strategie_gracza2; 									# Liczba strategii dla gracza 2
+param wyplata{1..strategie_gracza1, 1..strategie_gracza2}; 	# Macierz wypłat w grze
 
-# Zmienne decyzyjne
-var p{1..m} >= 0; 	# Strategie mieszane gracza 1
-var t;              # Zmienna celu - wypłata
+# Zmienne decyzyjne - Prawdopodobieństwa strategii gracza 1
+var prawdopodobienstwa_strategii{1..strategie_gracza1} >= 0;
+var wyplata_gracza2;             					
 
 # Funkcja celu
-maximize wartosc_gry: t; # Maksymalizacja wypłaty
+maximize maksymalizacja_wypłaty: wyplata_gracza2; # Maksymalizacja wypłaty
 
 # Ograniczenia
-gracz2{j in 1..n}: t <= sum{i in 1..m} p[i] * A[i,j];   # Ograniczenie dla gracza 2
-prob: sum{i in 1..m} p[i] = 1;                      	# Suma prawdopodobieństw strategii gracza 1 równa się 1
+o_gracz2{j in 1..strategie_gracza2}: wyplata_gracza2 <= sum{i in 1..strategie_gracza1} prawdopodobienstwa_strategii[i] * wyplata[i,j];
+o_prawdopodobienstw: sum{i in 1..strategie_gracza1} prawdopodobienstwa_strategii[i] = 1;  # Suma prawdopodobieństw strategii gracza 1 równa się 1
 
-# Dane
 data;
-param m := 2;
-param n := 2;
-param A := 1 1 8 1 2 -3 2 1 -15 2 2 10;
+param strategie_gracza1 := 2;
+param strategie_gracza2 := 2;
+param wyplata := 1 1 8 1 2 -3 2 1 -15 2 2 10;
 
 solve;
-
-display wartosc_gry, p, gracz2;
-# Wynik:
-# wartosc_gry = 0.972222
-#     p        gracz2
-# 1   0.694444   0.361111
-# 2   0.305556   0.638889
+display maksymalizacja_wypłaty, prawdopodobienstwa_strategii;
+# Wynik: maksymalizacja_wypłaty = 0.972222
+# prawdopodobienstwa_strategii 
+# 1  0.694444
+# 2  0.305556
 
 end;
