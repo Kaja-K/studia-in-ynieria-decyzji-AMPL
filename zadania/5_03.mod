@@ -29,14 +29,14 @@ param maksymalny_czas := 7;
 
 solve;
 display koszt_skrocenia_projektu, zapas_czasu, termin_zakonczenia;
-# Wynik:koszt_skrocenia_projektu = 18
+# Wynik:koszt_skrocenia_projektu = 19
 # 	zapas_czasu termin_zakonczenia 
-# A      0              5
-# B      1              0
-# C      2              0
-# D      5              3
-# E      0              0
-# F      1              4
-# G      0              3
+# A       1              0
+# B       1              0
+# C       2              0
+# D       5              3
+# E       0              1
+# F       1              4
+# G       0              3
 
 end;
