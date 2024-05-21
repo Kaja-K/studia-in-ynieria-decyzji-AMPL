@@ -23,7 +23,7 @@ o_minimalny_czas_wykonania{i in Z}: czas_wykonania[i] - zapas_czasu[i] >= minima
 
 data;
 set Z := 'A' 'B' 'C' 'D' 'E' 'F' 'G';
-set Poprzedniki := ('B', 'D') ('C', 'D') ('E', 'A') ('E', 'F') ('D', 'F') ('C', 'G');
+set Poprzedniki := ('B', 'D') ('C', 'D') ('A', 'E') ('E', 'F') ('D', 'F') ('C', 'G');
 param: Z: czas_wykonania, koszt_skrocenia, minimalny_czas :='A' 2 1 1 'B' 4 2 2 'C' 5 1 3 'D' 6 2 1 'E' 3 5 1 'F' 4 4 2 'G' 4 1 3;
 param maksymalny_czas := 7;
 
