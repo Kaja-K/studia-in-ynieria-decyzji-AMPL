@@ -2,12 +2,12 @@ option solver cplex;
 reset;
 
 # Parametry
-set zadania;                                    # Zbiór zadań w projekcie
-set poprzedniki within zadania cross zadania;   # Zbiór poprzedników zadań
-param czas_wykonania{zadania};                  # Czas trwania każdego zadania
-param minimalny_czas{zadania};                  # Minimalny czas wykonania każdego zadania
-param koszt_skrocenia{zadania};                 # Koszt skrócenia każdego zadania
-param maksymalny_czas;                          # Maksymalny czas trwania projektu
+set zadania;  # Zbiór zadań w projekcie
+set poprzedniki within zadania cross zadania; # Zbiór poprzedników zadań
+param czas_wykonania{zadania}; # Czas trwania każdego zadania
+param minimalny_czas{zadania}; # Minimalny czas wykonania każdego zadania
+param koszt_skrocenia{zadania};  # Koszt skrócenia każdego zadania
+param maksymalny_czas; # Maksymalny czas trwania projektu
 
 # Zmienne decyzyjne
 # Termin zakończenia każdego zadania

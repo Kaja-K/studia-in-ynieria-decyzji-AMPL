@@ -2,14 +2,14 @@ option solver cplex;
 reset;
 
 # Parametry
-set benzyny;								# Zbiór typów benzyn
-set podprodukty;							# Zbiór poproduktów
+set benzyny; # Zbiór typów benzyn
+set podprodukty; # Zbiór poproduktów
 param min_oktany_podproduktow{podprodukty};	# Minimalne liczby oktanowe dla poszczególnych poproduktów
-param cena_benzyny{benzyny};				# Cena jednostkowa benzyny
-param popyt_benzyny{benzyny};				# Dzienny popyt na benzynę
-param min_oktany_benzyny{benzyny};			# Minimalne liczby oktanowe dla poszczególnych benzyn
-param podaz_ropy;							# Dzienna podaż ropy
-param limit_krakowania;						# Limit przetwarzania w procesie krakowania
+param cena_benzyny{benzyny}; # Cena jednostkowa benzyny
+param popyt_benzyny{benzyny}; # Dzienny popyt na benzynę
+param min_oktany_benzyny{benzyny}; # Minimalne liczby oktanowe dla poszczególnych benzyn
+param podaz_ropy; # Dzienna podaż ropy
+param limit_krakowania; # Limit przetwarzania w procesie krakowania
 
 # Zmienna decyzyjna - Ilość podproduktów j-tego w benzynie i-tej
 var ilosc_podproduktow{benzyny, podprodukty} >= 0;
@@ -32,7 +32,7 @@ set podprodukty := ON82 ON98;
 param podaz_ropy := 1500000;
 param limit_krakowania := 200000;
 param min_oktany_podproduktow:= ON82 82 ON98 98;
-param: benzyny: cena_benzyny popyt_benzyny min_oktany_benzyny:= normalna 6.7 50000 87 premium	7.2	30000 89 super 8.1 40000 92;
+param: benzyny: cena_benzyny popyt_benzyny min_oktany_benzyny:= normalna 6.7 50000 87 premium 7.2 30000 89 super 8.1 40000 92;
 
 solve;
 display zysk, ilosc_podproduktow;

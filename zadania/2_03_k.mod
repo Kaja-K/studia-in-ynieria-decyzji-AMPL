@@ -2,13 +2,13 @@ option solver cplex;
 reset;
 
 # Parametry
-param projekt > 0, integer;					# Liczba projektów
-param lata > 0, integer;					# Liczba lat
-param koszt{1..projekt};					# Koszt każdego z projektów
-param przychod{1..projekt};					# Przychód z każdego z projektów
-param ukonczenie{1..projekt} >=0, <=1;		# Informacja czy projekt został ukończony
-param budzet{1..lata};						# Budżet na każdy rok
-param inwestowanie{1..lata, 1..projekt};	# Możliwość inwestowania w dany projekt w każdym roku
+param projekt > 0, integer; # Liczba projektów
+param lata > 0, integer; # Liczba lat
+param koszt{1..projekt}; # Koszt każdego z projektów
+param przychod{1..projekt}; # Przychód z każdego z projektów
+param ukonczenie{1..projekt} >=0, <=1; # Informacja czy projekt został ukończony
+param budzet{1..lata}; # Budżet na każdy rok
+param inwestowanie{1..lata, 1..projekt}; # Możliwość inwestowania w dany projekt w każdym roku
 
 # Zmienna decyzyjna - Zainwestowane pieniądze w projekcie i w roku j
 var pieniadze{j in 1..lata, i in 1..projekt} >= 0; 

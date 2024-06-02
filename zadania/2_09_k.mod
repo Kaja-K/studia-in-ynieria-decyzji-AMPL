@@ -2,10 +2,10 @@ option solver cplex;
 reset;
 
 # Parametry
-set fabryka;					# Zbiór fabryk
-set hurtownia;					# Zbiór hurtowni
-param popyt{hurtownia};			# Popyt w każdej hurtowni
-param podaz{fabryka};			# Podaż z każdej fabryki
+set fabryka; # Zbiór fabryk
+set hurtownia; # Zbiór hurtowni
+param popyt{hurtownia}; # Popyt w każdej hurtowni
+param podaz{fabryka}; # Podaż z każdej fabryki
 param cena{fabryka, hurtownia};	# Cena przewozu towarów z fabryk do hurtowni
 
 # Zmienna decyzyjna - Ilość towarów przewiezionych z fabryki i do hurtowni

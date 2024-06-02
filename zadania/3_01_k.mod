@@ -2,11 +2,11 @@ option solver cplex;
 reset;
 
 # Parametry
-set wyroby;									# Zbiór wyrobów
-set komponenty;								# Zbiór komponentów
-param liczba_jednostek{wyroby, komponenty};	# Liczba jednostek komponentu potrzebna do wyrobu
-param cena_jednostkowa{wyroby};				# Cena jednostkowa wyrobu
-param dostepnosc{komponenty};				# Dostępna liczba jednostek komponentu
+set wyroby; # Zbiór wyrobów
+set komponenty; # Zbiór komponentów
+param liczba_jednostek{wyroby, komponenty}; # Liczba jednostek komponentu potrzebna do wyrobu
+param cena_jednostkowa{wyroby}; # Cena jednostkowa wyrobu
+param dostepnosc{komponenty}; # Dostępna liczba jednostek komponentu
 
 # Zmienna decyzyjna - Liczba wyrobów, które zostaną wyprodukowane dla każdego wyrobu.
 var liczba_wyrobow{wyroby} >= 0; 

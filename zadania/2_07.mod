@@ -2,10 +2,10 @@ option solver cplex;
 reset;
 
 # Parametry
-set zdarzenie;						# Zbiór zdarzeń
-set projekt;						# Zbiór projektów
-param budzet;						# Budżet inwestycyjny
-param tablica{zdarzenie,projekt};	# Tabela zysków i strat dla każdego projektu w zależności od zdarzenia
+set zdarzenie; # Zbiór zdarzeń
+set projekt; # Zbiór projektów
+param budzet; # Budżet inwestycyjny
+param tablica{zdarzenie,projekt}; # Tabela zysków i strat dla każdego projektu w zależności od zdarzenia
 
 # Zmienne decyzyjne
 # Ilość dolarów zainwestowanych w każdy projekt

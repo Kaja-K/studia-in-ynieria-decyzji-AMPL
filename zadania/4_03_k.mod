@@ -2,13 +2,13 @@ option solver cplex;
 reset;
 
 # Parametry
-param przedmioty;										# Liczba przedmiotów
-param maksymalna_waga;									# Maksymalna waga paczki
-param wagi_przedmiotow{i in 1..przedmioty};				# Wagi przedmiotów
-param wartosci_przedmiotow{i in 1..przedmioty};			# Wartości przedmiotów
-set para_L1 within 1..przedmioty cross 1..przedmioty;	# Zbiór par przedmiotów z L1
-set para_L2 within 1..przedmioty cross 1..przedmioty;	# Zbiór par przedmiotów z L2
-set para_L3 within 1..przedmioty cross 1..przedmioty;	# Zbiór par przedmiotów z L3
+param przedmioty; # Liczba przedmiotów
+param maksymalna_waga; # Maksymalna waga paczki
+param wagi_przedmiotow{i in 1..przedmioty}; # Wagi przedmiotów
+param wartosci_przedmiotow{i in 1..przedmioty}; # Wartości przedmiotów
+set para_L1 within 1..przedmioty cross 1..przedmioty; # Zbiór par przedmiotów z L1
+set para_L2 within 1..przedmioty cross 1..przedmioty; # Zbiór par przedmiotów z L2
+set para_L3 within 1..przedmioty cross 1..przedmioty; # Zbiór par przedmiotów z L3
 
 # Zmienna decyzyjna - Binarna zmienna decyzyjna, która określa, czy przedmiot i zostanie zabrany w paczce.
 var czy_zabrac_przedmiot{i in 1..przedmioty} binary; 

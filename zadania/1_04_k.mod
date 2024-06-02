@@ -2,13 +2,13 @@ option solver cplex;
 reset;             
 
 # Parametry
-set mieszanka;								# Zbiór stopów
-set pierwiastek;							# Zbiór pierwiastków
-param popyt;								# Całkowite zapotrzebowanie na mieszankę (w tonach)
-param zawartosc{mieszanka, pierwiastek};	# Zawartość pierwiastków w poszczególnych stopach
-param limit{pierwiastek};					# Limity zawartości pierwiastków w mieszance (procent)
-param koszt{mieszanka};						# koszt za tonę każdego stopu
-param znak{pierwiastek};					# Znak ograniczenia dla każdego pierwiastka (1 dla <=, -1 dla >=)
+set mieszanka; # Zbiór stopów
+set pierwiastek; # Zbiór pierwiastków
+param popyt; # Całkowite zapotrzebowanie na mieszankę (w tonach)
+param zawartosc{mieszanka, pierwiastek}; # Zawartość pierwiastków w poszczególnych stopach
+param limit{pierwiastek}; # Limity zawartości pierwiastków w mieszance (procent)
+param koszt{mieszanka}; # koszt za tonę każdego stopu
+param znak{pierwiastek}; # Znak ograniczenia dla każdego pierwiastka (1 dla <=, -1 dla >=)
 
 # Zmienna decyzyjna - Ilość ton każdego stopu użytego w mieszance
 var ilosc_stopow{i in mieszanka} >= 0;

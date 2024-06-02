@@ -2,9 +2,9 @@ option solver cplex;
 reset;
 
 # Parametry
-param pudelka > 0, integer;			# Liczba pudełek
-param skrzynie > 0, integer;		# Maksymalna liczba skrzyń, równa liczbie pudełek
-param pojemnosc_skrzyn > 0, integer;# Pojemność skrzyń
+param pudelka > 0, integer; # Liczba pudełek
+param skrzynie > 0, integer; # Maksymalna liczba skrzyń, równa liczbie pudełek
+param pojemnosc_skrzyn > 0, integer; # Pojemność skrzyń
 param rozmiary_pudelek{1..pudelka}; # Rozmiary poszczególnych pudełek
 
 # Zmienne decyzyjne

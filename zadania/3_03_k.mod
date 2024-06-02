@@ -2,9 +2,9 @@ option solver cplex;
 reset;
 
 # Parametry
-set strategie_g1;							# Zbiór strategii dla gracza 1
-set strategie_g2;							# Zbiór strategii dla gracza 2
-param wypłaty{strategie_g1, strategie_g2};	# Macierz wypłat w grze
+set strategie_g1; # Zbiór strategii dla gracza 1
+set strategie_g2; # Zbiór strategii dla gracza 2
+param wypłaty{strategie_g1, strategie_g2}; # Macierz wypłat w grze
 
 # Zmienne decyzyjne
 # Prawdopodobieństwa strategii mieszanych gracza 1

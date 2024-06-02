@@ -2,11 +2,11 @@ option solver cplex;
 reset;
 
 # Parametry
-set wierzcholki;									# Zbiór wierzchołków w grafie
+set wierzcholki; # Zbiór wierzchołków w grafie
 set krawedzie within wierzcholki cross wierzcholki; # Zbiór krawędzi (para wierzchołków) 
-param przepustowosc{krawedzie} >= 0; 				# Przepustowość dla każdej krawędzi
-param zrodlo; 										# Wierzchołek źródłowy
-param ujscie;										# Wierzchołek ujściowy
+param przepustowosc{krawedzie} >= 0; # Przepustowość dla każdej krawędzi
+param zrodlo; # Wierzchołek źródłowy
+param ujscie; # Wierzchołek ujściowy
 
 # Zmienna decyzyjna - Ilość przepływu na każdej krawędzi
 var przeplyw{(i,j) in krawedzie} >= 0, <= przepustowosc[i,j];

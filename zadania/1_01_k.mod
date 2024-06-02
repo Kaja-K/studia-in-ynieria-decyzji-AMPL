@@ -2,11 +2,11 @@ option solver cplex;
 reset;
 
 # Parametry
-set telewizory;						# Zbiór typów telewizorów, które mogą być produkowane.
-param max_sprzedaz {telewizory};	# Maksymalna liczba telewizorów, które można sprzedać dla każdego typu telewizora.
-param roboczogodziny {telewizory};	# Liczba roboczogodzin potrzebna do wyprodukowania jednego telewizora dla każdego typu.
-param zysk {telewizory};			# Zysk z jednego telewizora dla każdego typu.
-param dostepne_godziny;				# Całkowita dostępna liczba roboczogodzin w danym okresie.
+set telewizory; # Zbiór typów telewizorów, które mogą być produkowane.
+param max_sprzedaz {telewizory}; # Maksymalna liczba telewizorów, które można sprzedać dla każdego typu telewizora.
+param roboczogodziny {telewizory}; # Liczba roboczogodzin potrzebna do wyprodukowania jednego telewizora dla każdego typu.
+param zysk {telewizory}; # Zysk z jednego telewizora dla każdego typu.
+param dostepne_godziny; # Całkowita dostępna liczba roboczogodzin w danym okresie.
 
 # Zmienna decyzyjna - Każda zmienna decyzyjna określa, ile telewizorów danego typu ma zostać wyprodukowanych, przy czym nie może przekroczyć maksymalnej sprzedaży.
 var produkcja {t in telewizory} >= 0, <= max_sprzedaz[t];  

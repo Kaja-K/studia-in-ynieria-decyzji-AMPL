@@ -2,13 +2,13 @@ option solver cplex;
 reset;
 
 # Parametry
-param typ > 0, integer;				# Liczba dostępnych typów kotletów
-param limit_kotlety{1..typ};		# Limit sprzedaży kotletów (kg) dla każdego typu
-param cena_kotlet{1..typ};			# Cena sprzedaży kotletów ($ za kg) dla każdego typu
-param koszt_indyk{1..typ};			# Koszt kupna indyków ($ za sztukę) dla każdego typu
-param proc_miesa_bialego{1..typ};	# Minimalny procent mięsa białego w kotletach dla każdego typu
-param mieso_biale{1..typ};			# Ilość mięsa białego z indyka (kg)  dla każdego typu
-param mieso_ciemne{1..typ};			# Ilość mięsa ciemnego z indyka (kg) dla każdego typu
+param typ > 0, integer;	# Liczba dostępnych typów kotletów
+param limit_kotlety{1..typ}; # Limit sprzedaży kotletów (kg) dla każdego typu
+param cena_kotlet{1..typ}; # Cena sprzedaży kotletów ($ za kg) dla każdego typu
+param koszt_indyk{1..typ}; # Koszt kupna indyków ($ za sztukę) dla każdego typu
+param proc_miesa_bialego{1..typ}; # Minimalny procent mięsa białego w kotletach dla każdego typu
+param mieso_biale{1..typ}; # Ilość mięsa białego z indyka (kg)  dla każdego typu
+param mieso_ciemne{1..typ};	# Ilość mięsa ciemnego z indyka (kg) dla każdego typu
 
 # Zmienne decyzyjne
 # Liczba kilogramów kotletów do wyprodukowania dla każdego typu, ograniczona przez limit sprzedaży.

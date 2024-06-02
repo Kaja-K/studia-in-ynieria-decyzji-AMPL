@@ -2,14 +2,14 @@ option solver cplex;
 reset;
 
 # Parametry
-set fabryki;								# Zbiór fabryk
-set odbiorcy;								# Zbiór odbiorców
-param calkowita_podaz;						# Całkowita podaż
-param popyt{odbiorcy};						# Popyt odbiorców
-param koszty_transportu{fabryki, odbiorcy};	# Koszty transportu
-param koszty_stale{fabryki};				# Koszty stałe uruchomienia fabryk
-param minimalna_produkcja;					# Minimalna produkcja
-param M := calkowita_podaz * card(fabryki);	# Duża stała równa całkowitej podaży
+set fabryki; # Zbiór fabryk
+set odbiorcy; # Zbiór odbiorców
+param calkowita_podaz; # Całkowita podaż
+param popyt{odbiorcy}; # Popyt odbiorców
+param koszty_transportu{fabryki, odbiorcy}; # Koszty transportu
+param koszty_stale{fabryki}; # Koszty stałe uruchomienia fabryk
+param minimalna_produkcja; # Minimalna produkcja
+param M := calkowita_podaz * card(fabryki); # Duża stała równa całkowitej podaży
 
 # Zmienne decyzyjne
 # Liczba produktów przewożonych z fabryk do odbiorców
@@ -18,8 +18,8 @@ var ilosc_przewozona{fabryki, odbiorcy} >= 0 integer;
 var fabryka_uruchomiona{fabryki} binary;				
 
 # Funkcja celu -  Minimalizuje łączne koszty transportu i koszty stałe uruchomienia fabryk. 
-				# Sumuje ona koszty transportu dla każdej pary fabryka-odbiorca, pomnożone przez liczbę przewożonych produktów z danej fabryki do danego odbiorcy,
-				# oraz sumuje koszty stałe uruchomienia fabryk, które są aktywowane, tj. dla których binarna zmienna fabryka_uruchomiona ma wartość 1.
+# Sumuje ona koszty transportu dla każdej pary fabryka-odbiorca, pomnożone przez liczbę przewożonych produktów z danej fabryki do danego odbiorcy,
+# oraz sumuje koszty stałe uruchomienia fabryk, które są aktywowane, tj. dla których binarna zmienna fabryka_uruchomiona ma wartość 1.
 minimize koszty_transportu_min: sum{i in fabryki, j in odbiorcy} koszty_transportu[i,j] * ilosc_przewozona[i,j] + 
 								sum{i in fabryki} koszty_stale[i] * fabryka_uruchomiona[i];
 

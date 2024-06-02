@@ -2,13 +2,13 @@ option solver cplex;
 reset;
 
 # Parametry
-param miesiac > 0, integer;		# Liczba miesięcy
-param popyt{1..miesiac};		# Popyt na kukurydzę w każdym miesiącu
-param gotowka_poczatkowa;		# Początkowa ilość gotówki
-param kukurydza_poczatkowa;		# Początkowa ilość kukurydzy w magazynie
-param cena_kupna{1..miesiac};	# Cena kupna kukurydzy w każdym miesiącu
-param koszt_kupna{1..miesiac};	# Koszt zakupu kukurydzy w każdym miesiącu
-param pojemnosc_magazynu;		# Pojemność magazynu
+param miesiac > 0, integer;	 # Liczba miesięcy
+param popyt{1..miesiac}; # Popyt na kukurydzę w każdym miesiącu
+param gotowka_poczatkowa; # Początkowa ilość gotówki
+param kukurydza_poczatkowa; # Początkowa ilość kukurydzy w magazynie
+param cena_kupna{1..miesiac}; # Cena kupna kukurydzy w każdym miesiącu
+param koszt_kupna{1..miesiac}; # Koszt zakupu kukurydzy w każdym miesiącu
+param pojemnosc_magazynu; # Pojemność magazynu
 
 # Zmienne decyzyjne
 # Ilość gotówki na koniec każdego miesiąca

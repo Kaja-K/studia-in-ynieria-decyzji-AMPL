@@ -2,11 +2,11 @@ option solver cplex;
 reset;
 
 # Parametry
-set przedmioty;														# Zbiór przedmiotów
-set godziny;														# Zbiór godzin
-set dni;															# Zbiór dni
-set grupy within przedmioty cross dni cross godziny cross 1..10;	# Zbiór grup, każda związana z przedmiotem, dniem, godziną i numerem
-param maksymalna_godzin;											# Maksymalna liczba godzin
+set przedmioty; # Zbiór przedmiotów
+set godziny; # Zbiór godzin
+set dni; # Zbiór dni
+set grupy within przedmioty cross dni cross godziny cross 1..10; # Zbiór grup, każda związana z przedmiotem, dniem, godziną i numerem
+param maksymalna_godzin; # Maksymalna liczba godzin
 
 # Zmienna decyzyjna - Binarna zmienna określająca, czy dana grupa jest wybrana
 var wybrane{grupy} binary;

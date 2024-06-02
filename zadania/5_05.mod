@@ -2,9 +2,9 @@ option solver cplex;
 reset;
 
 # Parametry
-set wierzcholki;  									# Zbiór wierzchołków
+set wierzcholki; # Zbiór wierzchołków
 set krawedzie within wierzcholki cross wierzcholki; # Zbiór krawędzi
-param n:= card(wierzcholki);  						# Liczba wierzchołków
+param n:= card(wierzcholki); # Liczba wierzchołków
 
 # Zmienna decyzyjna - Binarna 1 jeśli wierzchołek i należy do kliki, 0 w przeciwnym razie
 var klika{wierzcholki} binary; 

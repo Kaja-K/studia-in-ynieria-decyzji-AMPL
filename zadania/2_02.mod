@@ -2,11 +2,11 @@ option solver cplex;
 reset;              
 
 # Parametry
-param lokaty;						# Liczba dostępnych lokat
-param okresy;						# Liczba okresów
-param oprocentowanie{1..lokaty};	# Oprocentowanie każdej lokaty
-param przychody{1..okresy};			# Przychody w każdym okresie
-param wydatki{1..okresy};			# Wydatki w każdym okresie
+param lokaty; # Liczba dostępnych lokat
+param okresy; # Liczba okresów
+param oprocentowanie{1..lokaty}; # Oprocentowanie każdej lokaty
+param przychody{1..okresy}; # Przychody w każdym okresie
+param wydatki{1..okresy}; # Wydatki w każdym okresie
 
 # Zmienna decyzyjna - Ilość lokat każdego rodzaju w każdym okresie
 var lokata{1..lokaty, 1..okresy} >= 0;

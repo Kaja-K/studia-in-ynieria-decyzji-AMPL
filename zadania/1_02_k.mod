@@ -2,14 +2,14 @@ option solver cplex;
 reset;
 
 # Parametry
-param uprawa > 0 integer;	# Liczba dostępnych upraw - numer uprawy
-param cena{1..uprawa};		# Cena za tonę każdej uprawy
-param wydajność{1..uprawa};	# Wydajność (tony z hektara) każdej uprawy
-param praca{1..uprawa};		# Liczba godzin pracy potrzebnych do obsiania jednego hektara każdej uprawy
-param popyt{1..uprawa};		# Maksymalny popyt na każdą uprawę (w tonach)
-param pole_limit;			# Limit powierzchni pola (hektary)
-param godz_limit;			# Limit dostępnych godzin pracy
-param koszt_godziny;		# Koszt godziny pracy (USD)
+param uprawa > 0 integer; # Liczba dostępnych upraw - numer uprawy
+param cena{1..uprawa}; # Cena za tonę każdej uprawy
+param wydajność{1..uprawa}; # Wydajność (tony z hektara) każdej uprawy
+param praca{1..uprawa}; # Liczba godzin pracy potrzebnych do obsiania jednego hektara każdej uprawy
+param popyt{1..uprawa}; # Maksymalny popyt na każdą uprawę (w tonach)
+param pole_limit; # Limit powierzchni pola (hektary)
+param godz_limit; # Limit dostępnych godzin pracy
+param koszt_godziny; # Koszt godziny pracy (USD)
 
 # Zmienna decyzyjna - Ilość hektarów przeznaczonych na produkcję każdej z upraw
 var hektary{i in 1..uprawa} >= 0, <= popyt[i] / wydajność[i];  

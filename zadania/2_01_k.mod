@@ -2,14 +2,14 @@ option solver cplex;
 reset;               
 
 # Parametry
-set produkt;						# Zbiór produktów
-set skladnik;						# Zbiór składników odżywczych
-param popyt;						# Wielkość popytu na paszę
-param limit_produkt{produkt};		# Maksymalna ilość dostępna dla każdego produktu
-param cena{produkt};                # Cena jednostkowa każdego produktu
+set produkt; # Zbiór produktów
+set skladnik; # Zbiór składników odżywczych
+param popyt; # Wielkość popytu na paszę
+param limit_produkt{produkt}; # Maksymalna ilość dostępna dla każdego produktu
+param cena{produkt}; # Cena jednostkowa każdego produktu
 param zawartosc{produkt, skladnik};	# Zawartość składników odżywczych w każdym produkcie
-param limit_dolny{skladnik};		# Dolne ograniczenia zawartości składników w paszy
-param limit_gorny{skladnik};		# Górne ograniczenia zawartości składników w paszy
+param limit_dolny{skladnik}; # Dolne ograniczenia zawartości składników w paszy
+param limit_gorny{skladnik}; # Górne ograniczenia zawartości składników w paszy
 
 # Zmienna decyzyjna - Ilość każdego produktu użytego w paszy (w kg)
 var ilosc_produktow{i in produkt} >= 0;

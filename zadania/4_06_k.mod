@@ -2,9 +2,9 @@ option solver cplex;
 reset;
 
 # Parametry
-param paczki;								# Liczba paczek
-param zasieg;								# Zasięg czujnika
-set Paczki within 1..paczki cross 1..paczki;# Paczki mają dwie współrzędne - wiersz i kolumnę
+param paczki; # Liczba paczek
+param zasieg; # Zasięg czujnika
+set Paczki within 1..paczki cross 1..paczki; # Paczki mają dwie współrzędne - wiersz i kolumnę
 
 # Zmienna decyzyjna - binarna macierz reprezentująca obecność kamery na danej paczce
 var kamery {1..paczki, 1..paczki} binary;
@@ -19,10 +19,10 @@ o_paczki_bez_kamery{(i,j) in Paczki}: kamery[i,j] = 0;
 # Gwarantuje, że każda paczka jest obserwowana przez co najmniej jedną kamerę. Suma obserwacji poziomych i pionowych dla każdej paczki musi być co najmniej równa 1.			
 o_czy_paczka_obserwowana{(k,l) in Paczki}: 	
 # Sumuje wartości zmiennych binarnych kamery dla wszystkich pól w zasięgu poziomym (wiersz k) paczki o współrzędnych (k,l). Zakres sumowania jest ograniczony do wartości 
-# 	od max(l-zasieg,1) do min(l+zasieg,paczki), co oznacza, że suma uwzględnia pola od l - zasieg do l + zasieg, ale nie wychodzi poza granice paczek.							
+# od max(l-zasieg,1) do min(l+zasieg,paczki), co oznacza, że suma uwzględnia pola od l - zasieg do l + zasieg, ale nie wychodzi poza granice paczek.							
 sum{j in max(l-zasieg,1)..min(l+zasieg,paczki)} kamery[k,j] +  		
 # Sumuje wartości zmiennych binarnych kamery dla wszystkich pól w zasięgu pionowym (kolumna l) paczki o współrzędnych (k,l). Zakres sumowania jest ograniczony do wartości 
-# 	od max(k-zasieg,1) do min(k+zasieg,paczki), co oznacza, że suma uwzględnia pola od k - zasieg do k + zasieg, ale nie wychodzi poza granice paczek.	
+# od max(k-zasieg,1) do min(k+zasieg,paczki), co oznacza, że suma uwzględnia pola od k - zasieg do k + zasieg, ale nie wychodzi poza granice paczek.	
 sum{j in max(k-zasieg,1)..min(k+zasieg,paczki)} kamery[j,l] >= 1; 	
 
 data;

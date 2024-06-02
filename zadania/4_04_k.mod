@@ -2,10 +2,10 @@ option solver cplex;
 reset;
 
 # Parametry 
-param posterunki > 0, integer;						# Liczba posterunków
-param dzielnice > 0, integer;						# Liczba dzielnic
-param czas_podrozy > 0, integer;					# Maksymalny czas podróży
-param macierz_czasow{1..posterunki, 1..dzielnice};	# Macierz czasów podróży
+param posterunki > 0, integer; # Liczba posterunków
+param dzielnice > 0, integer; # Liczba dzielnic
+param czas_podrozy > 0, integer; # Maksymalny czas podróży
+param macierz_czasow{1..posterunki, 1..dzielnice}; # Macierz czasów podróży
 
 # Zmienna decyzyjna - Binarna zmienna określająca, czy posterunek i jest obecny w danej dzielnicy.
 var czy_posterunek{i in 1..posterunki} binary;  
@@ -14,7 +14,7 @@ var czy_posterunek{i in 1..posterunki} binary;
 minimize liczba_posterunkow: sum{i in 1..posterunki} czy_posterunek[i];  
 
 # Ograniczenie - Zapewnia, że dla każdego posterunku suma czasów podróży do każdej dzielnicy, spełniających warunek czasu podróży mniejszego lub
-			   # równego maksymalnemu czasowi podróży, musi być większa lub równa 1, jeśli posterunek jest obecny w tej dzielnicy.
+# 				 równego maksymalnemu czasowi podróży, musi być większa lub równa 1, jeśli posterunek jest obecny w tej dzielnicy.
 o_rozmieszczenie{i in 1..posterunki}: sum{j in 1..dzielnice: macierz_czasow[i,j] <= czas_podrozy} czy_posterunek[j] * macierz_czasow[i,j] >= 1;  
 
 data;

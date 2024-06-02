@@ -2,14 +2,14 @@ option solver cplex;
 reset;
 
 # Parametry
-set samoloty;								# Zbiór typów samolotów
-set trasy;									# Zbiór tras lotniczych
-param pojemnosc_samolotow{samoloty};		# Pojemność pasażerska dla każdego typu samolotu
-param dostepne_samoloty{samoloty};			# Dostępna liczba samolotów dla każdego typu
-param liczba_lotow{samoloty, trasy};		# Liczba lotów dla każdego typu samolotu na danej trasie
-param liczba_pasazerow{trasy};				# Liczba pasażerów oczekujących na każdej trasie
-param koszt_lotu{samoloty, trasy}; 			# Koszt przelotu dla każdego typu samolotu na danej trasie
-param koszt_utraconych_pasazerow{trasy};	# Koszt utraconych pasażerów dla każdej trasy
+set samoloty; # Zbiór typów samolotów
+set trasy; # Zbiór tras lotniczych
+param pojemnosc_samolotow{samoloty}; # Pojemność pasażerska dla każdego typu samolotu
+param dostepne_samoloty{samoloty}; # Dostępna liczba samolotów dla każdego typu
+param liczba_lotow{samoloty, trasy}; # Liczba lotów dla każdego typu samolotu na danej trasie
+param liczba_pasazerow{trasy}; # Liczba pasażerów oczekujących na każdej trasie
+param koszt_lotu{samoloty, trasy}; # Koszt przelotu dla każdego typu samolotu na danej trasie
+param koszt_utraconych_pasazerow{trasy}; # Koszt utraconych pasażerów dla każdej trasy
 
 # Zmienne decyzyjne
 # Liczba samolotów typu i na trasie j

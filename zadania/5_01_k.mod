@@ -2,11 +2,11 @@ option solver cplex;
 reset;
 
 # Parametry
-set wierzcholki;									# Zbiór wierzchołków w grafie
+set wierzcholki; # Zbiór wierzchołków w grafie
 set krawedzie within wierzcholki cross wierzcholki;	# Zbiór krawędzi w grafie, gdzie każda krawędź jest parą wierzchołków
-param koszt{krawedzie};								# Koszt transportu po krawędziach
-param pojemnosc{krawedzie} >= 0;					# Pojemność każdej krawędzi
-param bilans_przeplywu{wierzcholki};				# Bilans przepływu towaru w każdym wierzchołku
+param koszt{krawedzie}; # Koszt transportu po krawędziach
+param pojemnosc{krawedzie} >= 0; # Pojemność każdej krawędzi
+param bilans_przeplywu{wierzcholki}; # Bilans przepływu towaru w każdym wierzchołku
 
 # Zmienna decyzyjna - Ilość towaru przewożona po każdej krawędzi
 var przeplyw{krawedzie} >= 0;

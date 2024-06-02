@@ -2,9 +2,9 @@ option solver cplex;
 reset;
 
 # Parametry
-param dzien > 0, integer;		# Liczba dni w tygodniu
-param wolne >= 0, integer;		# Liczba dni wolnych w tygodniu
-param zatrudnienie{1..dzien};	# Wymagana liczba zatrudnionych pracowników w każdym dniu
+param dzien > 0, integer; # Liczba dni w tygodniu
+param wolne >= 0, integer; # Liczba dni wolnych w tygodniu
+param zatrudnienie{1..dzien}; # Wymagana liczba zatrudnionych pracowników w każdym dniu
 
 # Zmienna decyzyjna - Liczba zatrudnionych w danym dniu
 var zatrudnieni{1..dzien} >= 0, integer;

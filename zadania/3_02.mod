@@ -2,13 +2,13 @@ option solver cplex;
 reset;
 
 # Parametry
-set zboze; 				# Zbiór zbóż
-param cena{zboze}; 		# Cena za tonę zbóż
-param popyt{zboze}; 	# Popyt na dane zboże
-param praca{zboze}; 	# Wymagany czas pracy na hektarze dla danego zboża
+set zboze; # Zbiór zbóż
+param cena{zboze}; # Cena za tonę zbóż
+param popyt{zboze}; # Popyt na dane zboże
+param praca{zboze}; # Wymagany czas pracy na hektarze dla danego zboża
 param wydajnosc{zboze}; # Wydajność zboża na hektarze
-param rozmiar_pola; 	# Rozmiar pola w hektarach
-param limit_pracy;		# Limit czasu pracy
+param rozmiar_pola; # Rozmiar pola w hektarach
+param limit_pracy; # Limit czasu pracy
 
 # Zmienna decyzyjna - Ilość obsianych hektarów dla każdego zboża
 var ilosc_hektarow{zboze} >= 0;

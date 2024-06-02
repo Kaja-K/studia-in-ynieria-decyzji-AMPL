@@ -3,9 +3,9 @@ option solver cplex;
 reset;
 
 # Parametry
-param strategie_g1;								# Liczba strategii dla gracza 1
-param strategie_g2;								# Liczba strategii dla gracza 2
-param wyplata{1..strategie_g1, 1..strategie_g2};# Macierz wypłat w grze
+param strategie_g1; # Liczba strategii dla gracza 1
+param strategie_g2; # Liczba strategii dla gracza 2
+param wyplata{1..strategie_g1, 1..strategie_g2}; # Macierz wypłat w grze
 
 # Zmienne decyzyjne
 # Prawdopodobieństwa strategii gracza 1
@@ -36,9 +36,9 @@ option solver cplex;
 reset;
 
 # Parametry
-set strategie_nieparzystego;									# Zbiór strategii dla gracza Nieparzysty
-set strategie_parzystego;										# Zbiór strategii dla gracza Parzysty
-param wyplata{strategie_nieparzystego, strategie_parzystego};	# Macierz wypłat w grze
+set strategie_nieparzystego; # Zbiór strategii dla gracza Nieparzysty
+set strategie_parzystego; # Zbiór strategii dla gracza Parzysty
+param wyplata{strategie_nieparzystego, strategie_parzystego}; # Macierz wypłat w grze
 
 # Zmienne decyzyjne - Prawdopodobieństwa strategii gracza Nieparzysty
 var prawdopod_strategii_niep{strategie_nieparzystego} >= 0, <= 1;  

@@ -2,10 +2,10 @@ option solver cplex;
 reset;
 
 # Parametry
-set wierzcholki;									# Zbiór wierzchołków w grafie
+set wierzcholki; # Zbiór wierzchołków w grafie
 set krawedzie within wierzcholki cross wierzcholki;	# Zbiór krawędzi w grafie
-param odleglosc{krawedzie};							# Odległość każdej krawędzi
-param roznica_strumieni{wierzcholki};				# Parametr różnica strumieni dla każdego wierzchołka
+param odleglosc{krawedzie}; # Odległość każdej krawędzi
+param roznica_strumieni{wierzcholki}; # Parametr różnica strumieni dla każdego wierzchołka
 
 # Zmienna decyzyjna - Czy dana krawędź jest wykorzystywana w ścieżce, zmienna binarna. 
 var uzyta{(i,j) in krawedzie} binary;

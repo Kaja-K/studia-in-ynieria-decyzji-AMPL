@@ -3,9 +3,9 @@ reset;
 
 # Parametry
 set maszyna;
-param wagi{maszyna}, integer;	# Wagi poszczególnych maszyn
-param wsp_x{maszyna}, integer;	# Współrzędne X dla maszyn
-param wsp_y{maszyna}, integer;	# Współrzędne Y dla maszyn
+param wagi{maszyna}, integer; # Wagi poszczególnych maszyn
+param wsp_x{maszyna}, integer; # Współrzędne X dla maszyn
+param wsp_y{maszyna}, integer; # Współrzędne Y dla maszyn
 
 # Zmienne decyzyjne
 # Współrzędna X nowej maszyny

@@ -2,17 +2,17 @@ option solver cplex;
 reset;
 
 # Parametry
-set miasto; 							# Liczba miast
-set spalarnia;							# Liczba spalarni
-set wysypisko;							# Liczba wysypisk
-param odpady{miasto};					# Ilość odpadów w każdym z miast
-param limit_spalania{spalarnia};		# Limit spalania w każdej z spalarni
-param koszt_spalania{spalarnia};		# Koszt spalania w każdej z spalarni
-param wsp_spalania;						# Współczynnik spalania odpadów
-param limit_wysypiska{wysypisko};		# Limit ilości odpadów składowanych w każdym z wysypisk
-param koszt_transportu;					# Koszt transportu jednej tony odpadów
-param odleglosc_1{miasto, spalarnia};	# Odległość między miastami a spalarniami
-param odleglosc_2{spalarnia, wysypisko};# Odległość między spalarniami a wysypiskami
+set miasto; # Liczba miast
+set spalarnia; # Liczba spalarni
+set wysypisko; # Liczba wysypisk
+param odpady{miasto}; # Ilość odpadów w każdym z miast
+param limit_spalania{spalarnia}; # Limit spalania w każdej z spalarni
+param koszt_spalania{spalarnia}; # Koszt spalania w każdej z spalarni
+param wsp_spalania; # Współczynnik spalania odpadów
+param limit_wysypiska{wysypisko}; # Limit ilości odpadów składowanych w każdym z wysypisk
+param koszt_transportu; # Koszt transportu jednej tony odpadów
+param odleglosc_1{miasto, spalarnia}; # Odległość między miastami a spalarniami
+param odleglosc_2{spalarnia, wysypisko}; # Odległość między spalarniami a wysypiskami
 
 # Zmienne decyzyjne
 # Ilość ton odpadów przewieziona z miasta i do spalarni j
@@ -21,9 +21,9 @@ var ilosc_odpadow{miasto, spalarnia} >= 0;
 var ilosc_popiolu{spalarnia, wysypisko} >= 0; 
 
 # Funkcja celu - Minimalizacja całkowitego kosztu
-minimize Koszt: sum{i in miasto, j in spalarnia} koszt_transportu * odleglosc_1[i,j] * ilosc_odpadow[i,j] 
-                + sum{i in miasto, j in spalarnia} koszt_spalania[j] * ilosc_odpadow[i,j]
-                + sum{j in spalarnia, k in wysypisko} koszt_transportu * odleglosc_2[j,k] * ilosc_popiolu[j,k]; 
+minimize Koszt: sum{i in miasto, j in spalarnia} koszt_transportu * odleglosc_1[i,j] * ilosc_odpadow[i,j] + 
+				sum{i in miasto, j in spalarnia} koszt_spalania[j] * ilosc_odpadow[i,j] + 
+				sum{j in spalarnia, k in wysypisko} koszt_transportu * odleglosc_2[j,k] * ilosc_popiolu[j,k]; 
 
 # Ograniczenia
 # Określa, że ilość odpadów w każdym z miast musi być równa ilości odpadów wyprodukowanych w tym mieście.
