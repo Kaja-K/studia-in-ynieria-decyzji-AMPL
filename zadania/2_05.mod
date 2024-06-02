@@ -2,36 +2,31 @@ option solver cplex;
 reset;
 
 # Parametry
-param n > 0, integer;  	    # Liczba maszyn w fabryce
-param wagi{1..n}, integer;	# Wagi poszczególnych maszyn
-param wsp_x{1..n}, integer; # Współrzędne X dla maszyn
-param wsp_y{1..n}, integer; # Współrzędne Y dla maszyn
+set maszyna;
+param wagi{maszyna}, integer;  # Wagi poszczególnych maszyn
+param wsp_x{maszyna}, integer; # Współrzędne X dla maszyn
+param wsp_y{maszyna}, integer; # Współrzędne Y dla maszyn
 
 # Zmienne decyzyjne
-var nowa_x, integer;	# Współrzędna X nowej maszyny
-var nowa_y, integer;	# Współrzędna Y nowej maszyny
-var odleglosc_x{1..n};	# Odległość nowej maszyny od istniejących maszyn wzdłuż osi X
-var odleglosc_y{1..n};	# Odległość nowej maszyny od istniejących maszyn wzdłuż osi Y
+var nowa_x, integer;		# Współrzędna X nowej maszyny
+var nowa_y, integer;		# Współrzędna Y nowej maszyny
+var odleglosc_x{maszyna};	# Odległość nowej maszyny od istniejących maszyn wzdłuż osi X
+var odleglosc_y{maszyna};	# Odległość nowej maszyny od istniejących maszyn wzdłuż osi Y
 
 # Funkcja celu - Minimalizacja sumy ważonych odległości nowej maszyny od istniejących maszyn
-minimize suma_odleglosci: sum{i in 1..n} (odleglosc_x[i] * wagi[i]) + sum{i in 1..n} (odleglosc_y[i] * wagi[i]);
+minimize suma_odleglosci: sum{i in maszyna} wagi[i]*(odleglosc_x[i] + odleglosc_y[i]);
 
 # Ograniczenia - Określenie odległości nowej maszyny od istniejących maszyn
-o_odleglosc_x{i in 1..n}: odleglosc_x[i] >= nowa_x - wsp_x[i];           # Odległość nowej maszyny od istniejących maszyn wzdłuż osi X
-o_odleglosc_x_minus{i in 1..n}: odleglosc_x[i] >= -(nowa_x - wsp_x[i]);  # (wartość bezwzględna)
-o_odleglosc_y{i in 1..n}: odleglosc_y[i] >= nowa_y - wsp_y[i];           # Odległość nowej maszyny od istniejących maszyn wzdłuż osi Y
-o_odleglosc_y_minus{i in 1..n}: odleglosc_y[i] >= -(nowa_y - wsp_y[i]);  # (wartość bezwzględna)
+o_odleglosc_x{i in maszyna}: odleglosc_x[i] >= nowa_x - wsp_x[i];           # Odległość nowej maszyny od istniejących maszyn wzdłuż osi X i Y musi być większa lub równa różnicy współrzędnych nowej maszyny i istniejących maszyn.
+o_odleglosc_x_minus{i in maszyna}: odleglosc_x[i] >= -(nowa_x - wsp_x[i]);  # (wartość bezwzględna)
+o_odleglosc_y{i in maszyna}: odleglosc_y[i] >= nowa_y - wsp_y[i];           # Odległość ta jest większa lub równa wartości bezwzględnej różnicy współrzędnych nowej maszyny i istniejących maszyn.
+o_odleglosc_y_minus{i in maszyna}: odleglosc_y[i] >= -(nowa_y - wsp_y[i]);  # (wartość bezwzględna)
 
-data;
-param n := 4;          		
-param wagi := 1 5 2 7 3 3 4 10;			
-param wsp_x:= 1 3 2 0 3 -2 4 2; 		
-param wsp_y:= 1 0 2 -3 3 1 4 4; 		
-
+data;        		
+param: maszyna: wsp_x, wsp_y, wagi := 'Fabryka-1' 3 0 5  
+									  'Fabryka-2' 0 -3 7 
+									  'Fabryka-3' -2 1 3
+									  'Fabryka-4' 2 4 10;		
 solve;
 display suma_odleglosci, nowa_x, nowa_y;
-# Wynik: suma_odleglosci = 94
-# nowa_x = 2
-# nowa_y = 1
-
 end;

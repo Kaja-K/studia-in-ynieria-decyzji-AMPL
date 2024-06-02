@@ -2,29 +2,28 @@ option solver cplex;
 reset;
 
 # Parametry
-set Przedmioty;														# Zbiór przedmiotów
-set Godziny;														# Zbiór godzin
-set Dni;															# Zbiór dni
-set Grupy within Przedmioty cross Dni cross Godziny cross 1..10;	# Zbiór grup, każda związana z przedmiotem, dniem, godziną i numerem
+set przedmioty;														# Zbiór przedmiotów
+set godziny;														# Zbiór godzin
+set dni;															# Zbiór dni
+set grupy within przedmioty cross dni cross godziny cross 1..10;	# Zbiór grup, każda związana z przedmiotem, dniem, godziną i numerem
 param maksymalna_godzin;											# Maksymalna liczba godzin
 
 # Zmienna decyzyjna - Binarna zmienna określająca, czy dana grupa jest wybrana
-var wybrane{Grupy} binary;
+var wybrane{grupy} binary;
 
-# Funkcja celu - Maksymalizacja atrakcyjności planu
-maximize atrakcyjnosc_planu: sum{(i,j,k,l) in Grupy} wybrane[i,j,k,l]*1;
+# Funkcja celu - Maksymalizacja atrakcyjności planu poprzez zwiększenie liczby wybranych grup zajęciowych.
+maximize atrakcyjnosc_planu: sum{(i,j,k,l) in grupy} wybrane[i,j,k,l]*1;
 
 # Ograniczenia
-o_czy_zapisany {i in Przedmioty}: sum{(i,j,k,l) in Grupy} wybrane[i,j,k,l] = 1;						# Każdy przedmiot musi być zapisany raz
-o_czy_nie_za_duzo_godzin {j in Dni}: sum{(i,j,k,l) in Grupy} wybrane[i,j,k,l] <= maksymalna_godzin;	# Nie więcej niż maksymalna liczba godzin dziennie
+o_czy_zapisany {i in przedmioty}: sum{(i,j,k,l) in grupy} wybrane[i,j,k,l] = 1;						# Każdy przedmiot musi być zapisany raz.
+o_czy_nie_za_duzo_godzin {j in dni}: sum{(i,j,k,l) in grupy} wybrane[i,j,k,l] <= maksymalna_godzin;	# Nie więcej niż maksymalna liczba godzin dziennie dla każdego dnia.
 
 data;
-set Przedmioty := "Matematyka" "Fizyka" "Ekonomia" "Angielski" "Badania_operacyjne" "Logika";
-set Godziny := "7-9" "9-11" "11-13" "13-15" "15-17";
-set Dni := "PN" "WT" "SR" "CZ" "PT";
+set przedmioty := "Matematyka" "Fizyka" "Ekonomia" "Angielski" "Badania_operacyjne" "Logika";
+set godziny := "7-9" "9-11" "11-13" "13-15" "15-17";
+set dni := "PN" "WT" "SR" "CZ" "PT";
 param maksymalna_godzin := 6;
-set Grupy := 
-		    "Matematyka" "PN" "7-9" 1,
+set grupy :="Matematyka" "PN" "7-9" 1,
 		    "Matematyka" "PN" "11-13" 2,
 		    "Matematyka" "WT" "13-15" 7,
 		    "Fizyka" "SR" "11-13" 3,
@@ -48,9 +47,6 @@ set Grupy :=
 		    "Badania_operacyjne" "PT" "11-13" 5,
 		    "Fizyka" "WT" "9-11" 10,
 		    "Logika" "SR" "15-17" 3;	
-
 solve;
 display  atrakcyjnosc_planu,wybrane;
-# Wynik: atrakcyjnosc_planu = 6
-
 end;

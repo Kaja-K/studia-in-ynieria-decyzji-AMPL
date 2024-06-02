@@ -2,43 +2,38 @@ option solver cplex;
 reset;
 
 # Parametry
-set f;									# Zbiór fabryk
-set o;									# Zbiór odbiorców
-param całkowita_podaz;					# Całkowita podaż
-param popyt{o};							# Popyt odbiorców
-param koszty_transportu{f,o};			# Koszty transportu
-param koszty_stale{f};					# Koszty stałe uruchomienia fabryk
-param minimalna_produkcja;				# Minimalna produkcja
-param M := całkowita_podaz * card(f);	# Duża stała równa całkowitej podaży
+set fabryki;								# Zbiór fabryk
+set odbiorcy;								# Zbiór odbiorców
+param calkowita_podaz;						# Całkowita podaż
+param popyt{odbiorcy};						# Popyt odbiorców
+param koszty_transportu{fabryki, odbiorcy}; # Koszty transportu
+param koszty_stale{fabryki};				# Koszty stałe uruchomienia fabryk
+param minimalna_produkcja;					# Minimalna produkcja
+param M := calkowita_podaz * card(fabryki);	# Duża stała równa całkowitej podaży
 
 # Zmienne decyzyjne
-var ilosc_przewozona{f,o} >= 0 integer;	# Liczba produktów przewożonych z fabryk do odbiorców
-var fabryka_uruchomiona{f} binary;		# Binarna zmienna określająca czy fabryka jest uruchomiona
+var ilosc_przewozona{fabryki, odbiorcy} >= 0 integer;	# Liczba produktów przewożonych z fabryk do odbiorców
+var fabryka_uruchomiona{fabryki} binary;				# Binarna zmienna określająca czy fabryka jest uruchomiona
 
-# Funkcja celu
-minimize koszty_transportu_min: sum{i in f, j in o} koszty_transportu[i,j] * ilosc_przewozona[i,j] + 
-								sum{i in f} koszty_stale[i] * fabryka_uruchomiona[i];
+# Funkcja celu -  Minimalizuje łączne koszty transportu i koszty stałe uruchomienia fabryk. Sumuje ona koszty transportu dla każdej pary fabryka-odbiorca, pomnożone przez liczbę przewożonych produktów z danej fabryki do danego odbiorcy, oraz sumuje koszty stałe uruchomienia fabryk, które są aktywowane, tj. dla których binarna zmienna fabryka_uruchomiona ma wartość 1.
+minimize koszty_transportu_min: sum{i in fabryki, j in odbiorcy} koszty_transportu[i,j] * ilosc_przewozona[i,j] + 
+								sum{i in fabryki} koszty_stale[i] * fabryka_uruchomiona[i];
+
 # Ograniczenia
-o_podazy{i in f}: sum{j in o} ilosc_przewozona[i,j] <= całkowita_podaz;    									# Podaż z fabryk
-o_popytu{j in o}: sum{i in f} ilosc_przewozona[i,j] >= popyt[j];   											# Popyt odbiorców
-o_bin_1{i in f}: M * fabryka_uruchomiona[i] >= sum{j in o} ilosc_przewozona[i,j];							# Powiązanie z binarną zmienną fabryka_uruchomiona
-o_bin_2{i in f}: sum{j in o} ilosc_przewozona[i,j] <= M * fabryka_uruchomiona[i]; 
-o_min{i in f}: sum{j in o} -ilosc_przewozona[i,j] + minimalna_produkcja <= M * (1 - fabryka_uruchomiona[i]);# Minimalna produkcja przy nieuruchomionych fabrykach
+o_podazy{i in fabryki}: sum{j in odbiorcy} ilosc_przewozona[i,j] <= calkowita_podaz;    								 # Ogranicza podaż z każdej fabryki do całkowitej podaży.
+o_popytu{j in odbiorcy}: sum{i in fabryki} ilosc_przewozona[i,j] >= popyt[j];   										 # Zapewnia, że popyt odbiorców na produkty jest zaspokojony.
+o_bin_1{i in fabryki}: M * fabryka_uruchomiona[i] >= sum{j in odbiorcy} ilosc_przewozona[i,j];							 # Powiązujące ilość przewiezionych produktów z uruchomieniem fabryki, zapewniające, że jeśli fabryka jest uruchomiona, to przewozi co najmniej jednostkę produktu.
+o_bin_2{i in fabryki}: sum{j in odbiorcy} ilosc_przewozona[i,j] <= M * fabryka_uruchomiona[i]; 							 # Zapewnia, że jeśli fabryka jest uruchomiona, to ilość przewiezionych produktów nie przekroczy ogromnej stałej M.
+o_min{i in fabryki}: sum{j in odbiorcy} -ilosc_przewozona[i,j] + minimalna_produkcja <= M * (1 - fabryka_uruchomiona[i]);# Gwarantuje, że jeśli fabryka nie jest uruchomiona, to produkcja w niej będzie mniejsza niż minimalna produkcja.
 
 data;
-param: f: koszty_stale := F1 300 F2 250 F3 400;
-param: o: popyt := O1 100 O2 80 O3 50;
-param całkowita_podaz := 200;
+param: fabryki: koszty_stale := F1 300 F2 250 F3 400;
+param: odbiorcy: popyt := O1 100 O2 80 O3 50;
+param calkowita_podaz := 200;
 param minimalna_produkcja := 100;
-param koszty_transportu: O1  O2  O3 := F1  1   5   2 F2  7   4   2 F3  5   3   6;
-
+param koszty_transportu:  O1 O2 O3:=F1  1  5  2
+									F2  7  4  2
+									F3  5  3  6;
 solve;
 display koszty_transportu_min, ilosc_przewozona;
-# Wynik: koszty_transportu_min = 1070
-# ilosc_przewozona
-# F1 O1   100
-# F1 O3    30
-# F2 O2    80
-# F2 O3    20
-
 end;

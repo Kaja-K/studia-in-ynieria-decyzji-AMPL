@@ -1,39 +1,30 @@
-option solver cplex; 
-reset;   
+option solver cplex;
+reset;
 
 # Parametry
-set zdarzenia;                      		# Zbiór możliwych zdarzeń
-param n;             						# Liczba dostępnych projektów
-param wartosci_projektow{zdarzenia, 1..n};  # Wartości projektów w różnych zdarzeniach
-param dostepny_kapital;             		# Dostępny kapitał przeznaczony na inwestycje
+set zdarzenie; 						# Zbiór zdarzeń
+set projekt; 						# Zbiór projektów
+param budzet; 						# Budżet inwestycyjny
+param tablica{zdarzenie,projekt}; 	# Tabela zysków i strat dla każdego projektu w zależności od zdarzenia
 
 # Zmienne decyzyjne
-var kwota_inwestycji_projektu{1..n} >= 0;   # Kwota inwestycji w poszczególne projekty
-var oczekiwany_zysk;        				# Całkowity oczekiwany zysk
+var ilosc_dolarow{projekt} >= 0; # Ilość dolarów zainwestowanych w każdy projekt
+var zysk; 						 # Całkowity zysk
 
-# Funkcja celu - Maksymalizacja całkowitego oczekiwanego zysku
-maximize calkowity_zysk: oczekiwany_zysk;  
+# Funkcja celu - Maksymalizacja zysku
+maximize zysk_calkowity: zysk;
 
 # Ograniczenia
-o_zysk_zdarzenia{i in zdarzenia}: oczekiwany_zysk <= sum{j in 1..n} wartosci_projektow[i,j] * kwota_inwestycji_projektu[j];  # Oczekiwany zysk
-o_dostepny_kapital: sum{j in 1..n} kwota_inwestycji_projektu[j]  = dostepny_kapital;                            			 # Dostępna kwota kapitału
+o_limit_budzet: sum{j in projekt} ilosc_dolarow[j] = budzet; 						# Suma inwestycji we wszystkie projekty nie może przekroczyć dostępnego budżetu inwestycyjnego.
+o_zysku{i in zdarzenie}: zysk <= sum{j in projekt} ilosc_dolarow[j] * tablica[i,j]; # Zysk nie może przekroczyć sumy zysków i strat dla każdego projektu w danym zdarzeniu, pomnożonych przez ilość dolarów zainwestowanych w ten projekt.
 
 data;
-set zdarzenia := "Zdarzenie 1", "Zdarzenie 2", "Zdarzenie 3";
-param n := 4; 
-param dostepny_kapital := 500000; 
-param wartosci_projektow: 1 2 3 4 := 
-    	   "Zdarzenie 1" -3 4 -7 15 
-    	   "Zdarzenie 2" 5 -3 9 4 
-     	   "Zdarzenie 3" 3 2 10 -8;
-     	   
+set zdarzenie := 'Zdarzenie-1', 'Zdarzenie-2', 'Zdarzenie-3';
+set projekt := 'Projekt-1', 'Projekt-2', 'Projekt-3', 'Projekt-4';
+param budzet := 500000;
+param tablica: 'Projekt-1' 'Projekt-2' 'Projekt-3' 'Projekt-4':=   'Zdarzenie-1' -3 4 -7 15
+													               'Zdarzenie-2' 5 -3 9 4
+													               'Zdarzenie-3' 3 2 10 -8;
 solve;
-display oczekiwany_zysk, kwota_inwestycji_projektu;  
-# Wynik: oczekiwany_zysk = 1297300
-# kwota_inwestycji_projektu
-# 1       0
-# 2  222359
-# 3  170762
-# 4  106880
-
+display ilosc_dolarow, zysk_calkowity;
 end;
