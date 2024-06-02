@@ -2,9 +2,9 @@ option solver cplex;
 reset;
 
 # Parametry
-param dzien > 0, integer;     # Liczba dni w tygodniu
-param wolne >= 0, integer;    # Liczba dni wolnych w tygodniu
-param zatrudnienie{1..dzien}; # Wymagana liczba zatrudnionych pracowników w każdym dniu
+param dzien > 0, integer;		# Liczba dni w tygodniu
+param wolne >= 0, integer;		# Liczba dni wolnych w tygodniu
+param zatrudnienie{1..dzien};	# Wymagana liczba zatrudnionych pracowników w każdym dniu
 
 # Zmienna decyzyjna - Liczba zatrudnionych w danym dniu
 var zatrudnieni{1..dzien} >= 0, integer;
@@ -18,7 +18,7 @@ o_zatrudnienia{i in 1..dzien}: zatrudnienie[i] <= sum{j in (i + wolne + 1)..(i +
 data;
 param dzien := 7;
 param wolne := 2;
-param zatrudnienie:=[1] 17 [2] 13 [3] 15 [4] 19 [5] 14 [6] 16 [7] 11;
+param zatrudnienie:=1 17 2 13 3 15 4 19 5 14 6 16 7 11;
 
 solve;
 display liczba_zatrudnionych, zatrudnieni;
