@@ -2,41 +2,41 @@ option solver cplex;
 reset;
 
 # Parametry
-param okres; # Liczba okresów
-param oszacowany_popyt{1..okres}; # Oszacowany popyt w okresie t
-param cena_sprzedazy{1..okres}; # Cena sprzedaży w okresie t
-param koszt_produkcji{1..okres}; # Koszt produkcji w okresie t
-param koszt_magazynowania{1..okres}; # Koszt magazynowania w okresie t
-param koszt_niezaspokojonego_popytu{1..okres}; # Koszt sprzedanego popytu w okresie t
+param okresy; # Liczba okresów
+param oszacowany_popyt{1..okresy}; # Oszacowany popyt w okresie o
+param cena_sprzedazy{1..okresy}; # Cena sprzedaży w okresie o
+param koszt_produkcji{1..okresy}; # Koszt produkcji w okresie o
+param koszt_magazynowania{1..okresy}; # Koszt magazynowania w okresie o
+param koszt_niezaspokojonego_popytu{1..okresy}; # Koszt sprzedanego popytu w okresie o
 param minimalna_produkcja; # Dolne ograniczenie początkowej produkcji
 param maksymalna_produkcja; # Górne ograniczenie początkowej produkcji
 param maksymalna_zmiana_produkcji; # Maksymalna zmiana produkcji w kolejnych okresach (w procentach)
 
 # Zmienne decyzyjne
-# Produkcja w okresie t
-var produkcja{1..okres} >= minimalna_produkcja, <= maksymalna_produkcja;
-# Magazyn w okresie t
-var magazyn{1..okres} >= 0;  
-# Sprzedane w okresie t
-var sprzedane{1..okres} >= 0;
+# Produkcja w okresie o
+var produkcja{1..okresy} >= minimalna_produkcja, <= maksymalna_produkcja;
+# Magazyn w okresie o
+var magazyn{1..okresy} >= 0;  
+# Sprzedane w okresie o
+var sprzedane{1..okresy} >= 0;
 
 # Funkcja celu -  Maksymalizacja zysku (dochod ze sprzedazy - koszty produkcji - koszty magazynowania - koszty sprzedanego popytu)
-maximize zysk: sum{t in 1..okres} (cena_sprzedazy[t] * sprzedane[t] - koszt_produkcji[t] * produkcja[t] - koszt_magazynowania[t] * magazyn[t] - koszt_niezaspokojonego_popytu[t] * (oszacowany_popyt[t] - sprzedane[t]));
+maximize zysk: sum{o in 1..okresy} (cena_sprzedazy[o] * sprzedane[o] - koszt_produkcji[o] * produkcja[o] - koszt_magazynowania[o] * magazyn[o] - koszt_niezaspokojonego_popytu[o] * (oszacowany_popyt[o] - sprzedane[o]));
 
 # Ograniczenia
 # Gwarantuje, że ilość sprzedanych produktów w danym okresie nie przekroczy oszacowanego popytu. 
-o_popytu{t in 1..okres}: sprzedane[t] <= oszacowany_popyt[t]; 	
+o_popytu{o in 1..okresy}: sprzedane[o] <= oszacowany_popyt[o]; 	
 # Określa stan początkowy magazynu jako różnicę między produkcją a sprzedażą w pierwszym okresie. 													
 o_magazynu: magazyn[1] = produkcja[1] - sprzedane[1];     							
 # Zapewnia równowagę magazynową, gdzie stan magazynu w każdym okresie jest równy stanowi magazynu w poprzednim okresie plus produkcji minus sprzedaży.									
-o_rownowagi{t in 2..okres}: magazyn[t] = magazyn[t-1] + produkcja[t] - sprzedane[t]; 
+o_rownowagi{o in 2..okresy}: magazyn[o] = magazyn[o-1] + produkcja[o] - sprzedane[o]; 
 # Ogranicza zmienność produkcji między okresami do wartości nie przekraczającej maksymalnej zmiany produkcji w procentach.
-o_zmiany_produkcji1{t in 2..okres}: produkcja[t] - produkcja[t-1] <= produkcja[t-1] * maksymalna_zmiana_produkcji;	
+o_zmiany_produkcji1{o in 2..okresy}: produkcja[o] - produkcja[o-1] <= produkcja[o-1] * maksymalna_zmiana_produkcji;	
 # Ogranicza zmienność produkcji między okresami do wartości nie przekraczającej maksymalnej zmiany produkcji w procentach.  	
-o_zmiany_produkcji2{t in 2..okres}: - maksymalna_zmiana_produkcji * produkcja[t-1] <= (produkcja[t] - produkcja[t-1]); 
+o_zmiany_produkcji2{o in 2..okresy}: - maksymalna_zmiana_produkcji * produkcja[o-1] <= (produkcja[o] - produkcja[o-1]); 
 																																																	
 data;
-param okres := 10;
+param okresy := 10;
 param minimalna_produkcja := 180;
 param maksymalna_produkcja := 250;
 param maksymalna_zmiana_produkcji := 0.15;

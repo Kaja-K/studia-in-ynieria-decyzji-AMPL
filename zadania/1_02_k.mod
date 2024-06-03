@@ -2,33 +2,36 @@ option solver cplex;
 reset;
 
 # Parametry
-param uprawa > 0 integer; # Liczba dostępnych upraw - numer uprawy
-param cena{1..uprawa}; # Cena za tonę każdej uprawy
-param wydajność{1..uprawa}; # Wydajność (tony z hektara) każdej uprawy
-param praca{1..uprawa}; # Liczba godzin pracy potrzebnych do obsiania jednego hektara każdej uprawy
-param popyt{1..uprawa}; # Maksymalny popyt na każdą uprawę (w tonach)
+param uprawy > 0 integer; # Liczba dostępnych upraw - numer uprawy
+param cena{1..uprawy}; # Cena za tonę każdej uprawy
+param wydajność{1..uprawy}; # Wydajność (tony z hektara) każdej uprawy
+param praca{1..uprawy}; # Liczba godzin pracy potrzebnych do obsiania jednego hektara każdej uprawy
+param popyt{1..uprawy}; # Maksymalny popyt na każdą uprawę (w tonach)
 param pole_limit; # Limit powierzchni pola (hektary)
 param godz_limit; # Limit dostępnych godzin pracy
 param koszt_godziny; # Koszt godziny pracy (USD)
 
 # Zmienna decyzyjna - Ilość hektarów przeznaczonych na produkcję każdej z upraw
-var hektary{i in 1..uprawa} >= 0, <= popyt[i] / wydajność[i];  
+var hektary{u in 1..uprawy} >= 0, <= popyt[u] / wydajność[u];  
 
 # Funkcja celu - Zmaksymalizowanie zysku z uwzględnieniem kosztów produkcji i pracy.
-maximize zysk: sum{i in 1..uprawa} (cena[i] * wydajność[i] * hektary[i])  - sum{i in 1..uprawa} (praca[i] * koszt_godziny * hektary[i]);  
+maximize zysk: sum{u in 1..uprawy} (cena[u] * wydajność[u] * hektary[u]) - sum{u in 1..uprawy} (praca[u] * koszt_godziny * hektary[u]);  
 
 # Ograniczenia
 # Suma ilości hektarów przeznaczonych na każdą uprawę nie może przekroczyć limitu powierzchni pola.
-o_pole: sum{i in 1..uprawa} hektary[i] <= pole_limit;
+o_pole: sum{u in 1..uprawy} hektary[u] <= pole_limit;
 # Suma godzin pracy potrzebnych do obsiania każdego hektara każdej uprawy nie może przekroczyć dostępnych godzin pracy.
-o_godz: sum{i in 1..uprawa} praca[i] * hektary[i] <= godz_limit;
+o_godz: sum{u in 1..uprawy} praca[u] * hektary[u] <= godz_limit;
 
 data;
-param uprawa := 3;
+param uprawy := 3;
 param pole_limit := 100;  
 param godz_limit := 1400;
 param koszt_godziny := 10;
-param: cena wydajność praca popyt := 1 30 10 12 560 2 50 8 20 480 3 40 5 7 500;
+param: cena wydajność praca popyt := 
+		1 30 10 12 560 
+		2 50 8 20 480 
+		3 40 5 7 500;
 
 solve;
 display zysk, hektary;

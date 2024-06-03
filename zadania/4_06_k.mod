@@ -2,34 +2,34 @@ option solver cplex;
 reset;
 
 # Parametry
-param paczki; # Liczba paczek
-param zasieg; # Zasięg czujnika
-set Paczki within 1..paczki cross 1..paczki; # Paczki mają dwie współrzędne - wiersz i kolumnę
+param powierzchnia > 0, integer; # Wielkość powierzchni magazynu
+param zasieg > 0, integer; # Zasięg czujnika
+set pola := 1..powierzchnia cross 1..powierzchnia; # Zbiór pól
+set paczki within 1..powierzchnia cross 1..powierzchnia; # Zbiór paczek
 
-# Zmienna decyzyjna - binarna macierz reprezentująca obecność kamery na danej paczce
-var kamery {1..paczki, 1..paczki} binary;
+# Zmienna decyzyjna - Obecność czujnika na danym polu
+var czujnik{1..powierzchnia, 1..powierzchnia} >= 0, binary;
 
-# Funkcja celu - Minimalizacja liczby kamer
-minimize liczba_kamer: sum{i in 1..paczki, j in 1..paczki} kamery[i,j];
+# Funkcja celu - Minimalizacja liczby czujników
+minimize liczba_czujnikow: sum{wiersz in 1..powierzchnia, kolumna in 1..powierzchnia} czujnik[wiersz,kolumna];
 
 # Ograniczenia
-# Wymusza, że niektóre pola nie mogą zawierać kamer. 
-o_paczki_bez_kamery{(i,j) in Paczki}: kamery[i,j] = 0;  	
+# Czujnik nie może nachodzić na pole z paczką
+o_nachodzenia {(wiersz,kolumna) in paczki}: czujnik[wiersz,kolumna] = 0;
 
-# Gwarantuje, że każda paczka jest obserwowana przez co najmniej jedną kamerę. Suma obserwacji poziomych i pionowych dla każdej paczki musi być co najmniej równa 1.			
-o_czy_paczka_obserwowana{(k,l) in Paczki}: 	
-# Sumuje wartości zmiennych binarnych kamery dla wszystkich pól w zasięgu poziomym (wiersz k) paczki o współrzędnych (k,l). Zakres sumowania jest ograniczony do wartości 
-# od max(l-zasieg,1) do min(l+zasieg,paczki), co oznacza, że suma uwzględnia pola od l - zasieg do l + zasieg, ale nie wychodzi poza granice paczek.							
-sum{j in max(l-zasieg,1)..min(l+zasieg,paczki)} kamery[k,j] +  		
-# Sumuje wartości zmiennych binarnych kamery dla wszystkich pól w zasięgu pionowym (kolumna l) paczki o współrzędnych (k,l). Zakres sumowania jest ograniczony do wartości 
-# od max(k-zasieg,1) do min(k+zasieg,paczki), co oznacza, że suma uwzględnia pola od k - zasieg do k + zasieg, ale nie wychodzi poza granice paczek.	
-sum{j in max(k-zasieg,1)..min(k+zasieg,paczki)} kamery[j,l] >= 1; 	
+# Każda paczka musi być obserwowana przez co najmniej jeden czujnik
+# Dla każdej paczki (wiersz, kolumna) w zbiorze paczek, suma obserwacji poziomych i pionowych wokół tej paczki musi wynosić co najmniej 1.
+# Suma ta jest obliczana jako suma czujników w obszarze poziomym i pionowym wokół paczki, gdzie obszar ten jest określony przez zasięg czujnika.
+o_obserwowania {(wiersz,kolumna) in paczki}: 
+    sum{(k,kolumna) in pola: k >= wiersz - zasieg and k <= wiersz + zasieg} (if k >= 1 and k <= powierzchnia then czujnik[k,kolumna]) +
+    sum{(wiersz,k) in pola: k >= kolumna - zasieg and k <= kolumna + zasieg} (if k >= 1 and k <= powierzchnia then czujnik[wiersz,k]) >= 1;
 
 data;
-param paczki := 10;
+param powierzchnia := 10;
 param zasieg := 4;
-set Paczki := 2 4 1 6 4 7 2 7 1 3 4 4 2 9 8 3 9 5 5 1 8 10 7 7;
+set paczki := 2 4 1 6 4 7 2 7 1 3 4 4 2 9 8 3 9 5 5 1 8 10 7 7;
 
 solve;
-for{i in 1..paczki}{for{j in 1..paczki} printf "%s", if kamery[i,j]==1 then " c " else if (i,j) in Paczki then  " P " else " . "; printf "\n";}
+#for {wiersz in 1..powierzchnia} {for {kolumna in 1..powierzchnia} {printf "%s", if czujnik[wiersz,kolumna] == 1 then " c " else if (wiersz,kolumna) in paczki then " P " else " . ";}printf "\n";}
+display  liczba_czujnikow, czujnik;
 end;

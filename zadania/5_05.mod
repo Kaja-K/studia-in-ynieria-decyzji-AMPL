@@ -10,10 +10,10 @@ param n:= card(wierzcholki); # Liczba wierzchołków
 var klika{wierzcholki} binary; 
 
 # Funkcja celu - Maksymalizacja rozmiaru kliki
-maximize rozmiar_klika: sum{i in wierzcholki} klika[i];
+maximize rozmiar_klika: sum{pw in wierzcholki} klika[pw];
 
 # Ograniczenie - Każda para wierzchołków w klice musi być połączona krawędzią (znajomość między nimi)
-o_istnienie_kliki{(i,j) in wierzcholki cross wierzcholki: i < j}: klika[i] + klika[j] <= 1 + (if (i, j) in krawedzie then 1 else 0) * klika[i] * klika[j];
+o_istnienie_kliki{(pw,kw) in wierzcholki cross wierzcholki: pw < kw}: klika[pw] + klika[kw] <= 1 + (if (pw, kw) in krawedzie then 1 else 0) * klika[pw] * klika[kw];
 
 data;
 set wierzcholki := 1 2 3 4 5 6 7 8;

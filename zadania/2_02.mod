@@ -9,13 +9,13 @@ param przychody{1..okresy}; # Przychody w każdym okresie
 param wydatki{1..okresy}; # Wydatki w każdym okresie
 
 # Zmienna decyzyjna - Ilość lokat każdego rodzaju w każdym okresie
-var lokata{1..lokaty, 1..okresy} >= 0;
+var lokata{l in 1..lokaty, o in 1..okresy} >= 0;
 
 # Funkcja celu - Maksymalizacja sumy oprocentowania lokat w ostatnim okresie
-maximize zysk: sum{i in 1..lokaty} oprocentowanie[i] * lokata[i, okresy - i + 1];
+maximize zysk: sum{l in 1..lokaty} oprocentowanie[l] * lokata[l, okresy - l + 1];
 
-# Ograniczenie bilansu - Zapewnia równowagę między przychodami, lokatami oraz wydatkami w każdym okresie. Suma lokat w bieżącym okresie, z oprocentowaniem z poprzednich okresów, musi równać się sumie przychodów minus wydatków w danym okresie.
-o_bilans{j in 1..okresy}: wydatki[j] + sum{i in 1..lokaty} lokata[i, j] = przychody[j] + sum{i in 1..lokaty: i < j} oprocentowanie[i] * lokata[i, j - i]; 
+# Ograniczenie bilansu - Zapewnia równowagę między przychodami, lokatami oraz wydatkami w każdym okresie.
+o_bilans{o in 1..okresy}: wydatki[o] + sum{l in 1..lokaty} lokata[l, o] = przychody[o] + sum{l in 1..lokaty: l < o} oprocentowanie[l] * lokata[l, o - l]; 
 
 data;
 param lokaty := 4;

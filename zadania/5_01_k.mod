@@ -3,7 +3,7 @@ reset;
 
 # Parametry
 set wierzcholki; # Zbiór wierzchołków w grafie
-set krawedzie within wierzcholki cross wierzcholki;	# Zbiór krawędzi w grafie, gdzie każda krawędź jest parą wierzchołków
+set krawedzie within wierzcholki cross wierzcholki; # Zbiór krawędzi w grafie, gdzie każda krawędź jest parą wierzchołków 
 param koszt{krawedzie}; # Koszt transportu po krawędziach
 param pojemnosc{krawedzie} >= 0; # Pojemność każdej krawędzi
 param bilans_przeplywu{wierzcholki}; # Bilans przepływu towaru w każdym wierzchołku
@@ -12,13 +12,13 @@ param bilans_przeplywu{wierzcholki}; # Bilans przepływu towaru w każdym wierzc
 var przeplyw{krawedzie} >= 0;
 
 # Funkcja celu - Minimalizacja całkowitego kosztu transportu.  Działa ona poprzez sumowanie kosztów transportu po każdej krawędzi, pomnożonych przez ilość towaru przewożonego tą krawędzią. Ostateczna wartość funkcji celu jest sumą tych kosztów dla wszystkich krawędzi w grafie.
-minimize calkowity_koszt: sum{(i,j) in krawedzie} koszt[i,j] * przeplyw[i,j];
+minimize calkowity_koszt: sum{(pw,kw) in krawedzie} koszt[pw,kw] * przeplyw[pw,kw]; # pw - początkowy wierzchołek, kw - końcowy wierzchołek
 
 # Ograniczenia - Zachowanie bilansu przepływu w każdym wierzchołku oraz gwarancja, że ilość towaru przewożonego po każdej krawędzi nie przekracza jej pojemności.
 # Dla każdego wierzchołka, różnica między sumą towaru wchodzącego do wierzchołka a sumą towaru wychodzącego z wierzchołka musi być równa bilansowi przepływu tego wierzchołka.
-o_zachowanie_bilansu{i in wierzcholki}: sum{(i,j) in krawedzie} przeplyw[i,j] - sum{(j,i) in krawedzie} przeplyw[j,i] = bilans_przeplywu[i];
+o_zachowanie_bilansu{pw in wierzcholki}: sum{(pw,kw) in krawedzie} przeplyw[pw,kw] - sum{(kw,pw) in krawedzie} przeplyw[kw,pw] = bilans_przeplywu[pw];
 # Dla każdej krawędzi, ilość towaru przewożonego tą krawędzią nie może przekroczyć wartości pojemności tej krawędzi.
-o_pojemnosc_krawedzi{(i,j) in krawedzie}: przeplyw[i,j] <= pojemnosc[i,j];
+o_pojemnosc_krawedzi{(pw,kw) in krawedzie}: przeplyw[pw,kw] <= pojemnosc[pw,kw];
 
 data;
 set wierzcholki := 1 2 3 4 5;

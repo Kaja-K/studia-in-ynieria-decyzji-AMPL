@@ -16,7 +16,7 @@ var termin_zakonczenia{zadania} >= 0;
 var zapas_czasu{zadania} >= 0;
 
 # Funkcja celu - Minimalizacja całkowitego kosztu skrócenia projektu
-minimize koszt_skrocenia_projektu: sum{i in zadania} koszt_skrocenia[i] * zapas_czasu[i];
+minimize koszt: sum{i in zadania} koszt_skrocenia[i] * zapas_czasu[i];
 
 # Ograniczenia 
 # Zapewnienie odpowiedniego czasu dla poprzedników
@@ -33,5 +33,5 @@ set poprzedniki := ('B', 'D') ('C', 'D') ('A', 'E') ('E', 'F') ('D', 'F') ('C', 
 param: zadania: czas_wykonania, koszt_skrocenia, minimalny_czas :=	'A' 2 1 1 'B' 4 2 2 'C' 5 1 3 'D' 6 2 1 'E' 3 5 1 'F' 4 4 2 'G' 4 1 3;
 
 solve;
-display koszt_skrocenia_projektu, zapas_czasu, termin_zakonczenia;
+display koszt, zapas_czasu, termin_zakonczenia;
 end;

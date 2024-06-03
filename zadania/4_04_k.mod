@@ -4,23 +4,23 @@ reset;
 # Parametry 
 param posterunki > 0, integer; # Liczba posterunków
 param dzielnice > 0, integer; # Liczba dzielnic
-param czas_podrozy > 0, integer; # Maksymalny czas podróży
+param czas > 0, integer; # Maksymalny czas podróży
 param macierz_czasow{1..posterunki, 1..dzielnice}; # Macierz czasów podróży
 
 # Zmienna decyzyjna - Binarna zmienna określająca, czy posterunek i jest obecny w danej dzielnicy.
-var czy_posterunek{i in 1..posterunki} binary;  
+var czy_posterunek{p in 1..posterunki} binary;  
 
 # Funkcja celu - Minimalizacja liczby posterunków w każdej z dzielnic.
-minimize liczba_posterunkow: sum{i in 1..posterunki} czy_posterunek[i];  
+minimize liczba_posterunkow: sum{p in 1..posterunki} czy_posterunek[p];  
 
 # Ograniczenie - Zapewnia, że dla każdego posterunku suma czasów podróży do każdej dzielnicy, spełniających warunek czasu podróży mniejszego lub
 # 				 równego maksymalnemu czasowi podróży, musi być większa lub równa 1, jeśli posterunek jest obecny w tej dzielnicy.
-o_rozmieszczenie{i in 1..posterunki}: sum{j in 1..dzielnice: macierz_czasow[i,j] <= czas_podrozy} czy_posterunek[j] * macierz_czasow[i,j] >= 1;  
+o_rozmieszczenie{p in 1..posterunki}: sum{d in 1..dzielnice: macierz_czasow[p,d] <= czas} czy_posterunek[d] * macierz_czasow[p,d] >= 1;  
 
 data;
 param posterunki:=10;
 param dzielnice:=10;
-param czas_podrozy:=10;
+param czas:=10;
 param macierz_czasow:  1   2   3   4   5   6   7   8   9   10 :=
 					1   0  10  20  30  30  20  30  18  12  20
 					2  10   0  25  35  20  10   9  12  18  10

@@ -12,13 +12,13 @@ param maksymalna_godzin; # Maksymalna liczba godzin
 var wybrane{grupy} binary;
 
 # Funkcja celu - Maksymalizacja atrakcyjności planu poprzez zwiększenie liczby wybranych grup zajęciowych.
-maximize atrakcyjnosc_planu: sum{(i,j,k,l) in grupy} wybrane[i,j,k,l]*1;
+maximize atrakcyjnosc_planu: sum{(p,d,g,a) in grupy} wybrane[p,d,g,a]*1;
 
 # Ograniczenia
 # Każdy przedmiot musi być zapisany raz.
-o_czy_zapisany {i in przedmioty}: sum{(i,j,k,l) in grupy} wybrane[i,j,k,l] = 1;
+o_czy_zapisany {p in przedmioty}: sum{(p,d,g,a) in grupy} wybrane[p,d,g,a] = 1;
 # Nie więcej niż maksymalna liczba godzin dziennie dla każdego dnia.
-o_czy_nie_za_duzo_godzin {j in dni}: sum{(i,j,k,l) in grupy} wybrane[i,j,k,l] <= maksymalna_godzin;	
+o_czy_nie_za_duzo_godzin {d in dni}: sum{(p,d,g,a) in grupy} wybrane[p,d,g,a] <= maksymalna_godzin;	
 
 data;
 set przedmioty := "Matematyka" "Fizyka" "Ekonomia" "Angielski" "Badania_operacyjne" "Logika";

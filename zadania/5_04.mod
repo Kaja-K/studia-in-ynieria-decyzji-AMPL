@@ -9,13 +9,13 @@ param zrodlo; # Wierzchołek źródłowy
 param ujscie; # Wierzchołek ujściowy
 
 # Zmienna decyzyjna - Ilość przepływu na każdej krawędzi
-var przeplyw{(i,j) in krawedzie} >= 0, <= przepustowosc[i,j];
+var przeplyw{(pw,kw) in krawedzie} >= 0, <= przepustowosc[pw,kw];
 
 # Funkcja celu - Minimalizacja kosztu (przepływu ze źródła do ujścia)
 minimize koszt: -przeplyw[ujscie, zrodlo]; 
 
 # Ograniczenia - Bilans przepływu w każdym wierzchołku
-o_bilans_przeplywu{i in wierzcholki}: sum{(i,j) in krawedzie} przeplyw[i,j] - sum{(j,i) in krawedzie} przeplyw[j,i] = 0;
+o_bilans_przeplywu{pw in wierzcholki}: sum{(pw,kw) in krawedzie} przeplyw[pw,kw] - sum{(kw,pw) in krawedzie} przeplyw[kw,pw] = 0;
 
 data;
 param zrodlo := 1;  
