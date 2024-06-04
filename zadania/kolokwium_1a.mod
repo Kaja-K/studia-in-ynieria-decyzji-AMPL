@@ -18,8 +18,8 @@ minimize liczba_czujnikow: sum{wiersz in 1..powierzchnia, kolumna in 1..powierzc
 # Czujnik obserwuje paczki tylko na górze i na prawo
 o_obserwowania {(wiersz, kolumna) in paczki}:
     sum{(k, kolumna) in pola: k >= wiersz+1 and k <= wiersz + zasieg} (if k >= 1 and k <= powierzchnia then czujnik[k,kolumna]) +
-    sum{(wiersz, k) in pola: k >= kolumna+1 and k <= kolumna + zasieg} (if k >= 1 and k <= powierzchnia then czujnik[wiersz,k]) >= 1;
-
+    sum{(wiersz, k) in pola: k >= kolumna - zasieg and k <= kolumna - 1} (if k >= 1 and k <= powierzchnia then czujnik[wiersz,k]) >= 1;
+    
 data;
 param powierzchnia := 9;
 param zasieg := 3;
